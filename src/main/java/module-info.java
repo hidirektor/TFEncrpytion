@@ -11,9 +11,12 @@ module me.t3sl4.textfileencoder {
     requires eu.hansolo.tilesfx;
     requires commons.collections;
     requires org.apache.commons.codec;
+    requires java.desktop;
 
     opens me.t3sl4.textfileencoder to javafx.fxml;
     exports me.t3sl4.textfileencoder;
     exports me.t3sl4.textfileencoder.utils;
     opens me.t3sl4.textfileencoder.utils to javafx.fxml;
+    exports me.t3sl4.textfileencoder.Controllers;
+    opens me.t3sl4.textfileencoder.Controllers to javafx.fxml;
 }
