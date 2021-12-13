@@ -18,6 +18,7 @@ public class Main extends Application {
         stage.getIcons().add(new Image("https://i.imgur.com/puD6ReJ.png"));
         stage.setTitle("TFEncoder");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 

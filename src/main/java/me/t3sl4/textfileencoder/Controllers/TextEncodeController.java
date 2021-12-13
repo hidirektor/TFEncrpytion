@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import me.t3sl4.textfileencoder.utils.AES;
+import me.t3sl4.textfileencoder.utils.FileEncryption;
 import me.t3sl4.textfileencoder.utils.SHA256;
 
 public class TextEncodeController {
@@ -42,12 +44,15 @@ public class TextEncodeController {
     @FXML
     private TextField selectedKeyField;
 
+    @FXML
+    private TextField selectedFilePath;
+
     Alert alert = new Alert(Alert.AlertType.ERROR);
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
-    public static String key;
-    public static String sha256CipherText;
-    public static String spnCipherText;
+    public static String key = null;
+    public static String sha256CipherText = null;
+    public static String spnCipherText = null;
     public static File selectedFile = null;
 
     public static int keyStat = 0;
@@ -129,7 +134,6 @@ public class TextEncodeController {
 
     public void showKey() {
         if(key != null) {
-            String tempKey = key;
             if(keyStat == 0) {
                 selectedKeyField.setText(key);
                 keyStat = 1;
@@ -146,15 +150,32 @@ public class TextEncodeController {
 
     public void fileEncodingButton() throws IOException {
         FileChooser ds = new FileChooser();
-        ds.getExtensionFilters().add(new FileChooser.ExtensionFilter("Sadece .txt, .dat, .gif", "*.txt", "*.dat", "*.gif"));
+        ds.getExtensionFilters().add(new FileChooser.ExtensionFilter("Sadece .txt, .dat, .gif", "*.txt", "*.dat", "*.gif", "*.encrypted"));
         File d = ds.showOpenDialog(null);
         if(d != null) {
             selectedFile = d;
+            selectedFilePath.setText(selectedFile.getAbsolutePath());
         }
     }
 
     public void encodeSelectedFile() {
-
+        if(selectedFile != null && key != null) {
+            try {
+                //FileEncryption.encryptFile(selectedFile.getAbsolutePath(), key);
+                FileEncryption.decryptFile(selectedFile.getAbsolutePath(), key);
+                selectedFilePath.setText(null);
+                //decryptFile( "C:\\test.txt", "password" );
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            }
+        } else {
+            alert.setTitle("HATA!");
+            alert.setHeaderText("Şifreleme Algoritması Hatası.");
+            alert.setContentText("Dosya şifrelemek için önce bir anahtar belirlemeli ve şifrelenecek dosyayı seçmelisin.");
+            alert.showAndWait();
+        }
     }
 
     private void clrChoices() {

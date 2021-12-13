@@ -14,21 +14,6 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
 public class FileEncryption {
-
-    public static void main( String[] args ) {
-
-        try {
-            encryptFile( "C:\\test.txt", "password" );
-            decryptFile( "C:\\test.txt", "password" );
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
     //Arbitrarily selected 8-byte salt sequence:
     private static final byte[] salt = {
             (byte) 0x43, (byte) 0x76, (byte) 0x95, (byte) 0xc7,
@@ -46,7 +31,7 @@ public class FileEncryption {
         PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 42);
 
         /*Dump the key to a file for testing: */
-        FileEncryption.keyToFile(key);
+        //FileEncryption.keyToFile(key);
 
         //Set up the cipher:
         Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
@@ -143,7 +128,7 @@ public class FileEncryption {
     }
 
     /**Record the key to a text file for testing:**/
-    private static void keyToFile(SecretKey key){
+    private static void keyToFile2(SecretKey key){
         try {
             File keyFile = new File("C:\\keyfile.txt");
             FileWriter keyStream = new FileWriter(keyFile);
