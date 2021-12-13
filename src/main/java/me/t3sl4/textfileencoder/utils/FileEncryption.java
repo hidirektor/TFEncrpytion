@@ -1,4 +1,4 @@
-package me.t3sl4.textfileencoderdemo.tfencoderdemo.utils;
+package me.t3sl4.textfileencoder.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -14,9 +14,9 @@ import java.security.NoSuchAlgorithmException;
 
 import javafx.stage.FileChooser;
 import me.t3sl4.textfileencoder.utils.AES;
+import me.t3sl4.textfileencoder.utils.FileEncryption;
 import me.t3sl4.textfileencoder.utils.FileZIP;
 import me.t3sl4.textfileencoder.utils.SHA256;
-import me.t3sl4.textfileencoderdemo.tfencoderdemo.utils.FileEncryption;
 
 public class TextEncodeController {
     @FXML
@@ -165,9 +165,8 @@ public class TextEncodeController {
     public void encodeSelectedFile() {
         if(selectedFile != null && key != null) {
             try {
-                finalPath = FileZIP.compressFile(selectedFile.getAbsolutePath());
-                fileExtension.setText(findExtension(finalPath));
-                FileEncryption.encryptFile(finalPath, key);
+                fileExtension.setText(findExtension(selectedFile.getAbsolutePath()+".zip"));
+                FileEncryption.encryptFile(selectedFile.getAbsolutePath()+".zip", key);
                 selectedFilePath.setText(null);
             } catch (IOException e) {
                 e.printStackTrace();
