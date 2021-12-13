@@ -1,9 +1,6 @@
 package me.t3sl4.textfileencoder.Controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 
 import java.io.File;
@@ -13,11 +10,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import java.util.Optional;
 
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import me.t3sl4.textfileencoder.utils.AES;
 import me.t3sl4.textfileencoder.utils.FileEncryption;
 import me.t3sl4.textfileencoder.utils.SHA256;
@@ -54,6 +49,7 @@ public class TextEncodeController {
     public static String sha256CipherText = null;
     public static String spnCipherText = null;
     public static File selectedFile = null;
+    public static String oldExtension = null;
 
     public static int keyStat = 0;
 
@@ -161,10 +157,9 @@ public class TextEncodeController {
     public void encodeSelectedFile() {
         if(selectedFile != null && key != null) {
             try {
-                //FileEncryption.encryptFile(selectedFile.getAbsolutePath(), key);
-                FileEncryption.decryptFile(selectedFile.getAbsolutePath(), key);
+                FileEncryption.encryptFile(selectedFile.getAbsolutePath(), key);
+                //FileEncryption.decryptFile(selectedFile.getAbsolutePath(), key, findExtension(selectedFile.getName()));
                 selectedFilePath.setText(null);
-                //decryptFile( "C:\\test.txt", "password" );
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (GeneralSecurityException e) {
@@ -196,5 +191,15 @@ public class TextEncodeController {
     private String AESDecrypt(String cipherText, String key) throws Exception {
         String decryptedTextBase64 = AES.decrypt(cipherText, key);
         return decryptedTextBase64;
+    }
+
+    private String findExtension(String fileName) {
+        String extension = "";
+
+        int index = fileName.lastIndexOf('.');
+        if (index > 0) {
+            extension = fileName.substring(index + 1);
+        }
+        return "." + extension;
     }
 }
