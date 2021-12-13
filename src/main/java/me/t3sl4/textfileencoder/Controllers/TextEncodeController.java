@@ -182,28 +182,36 @@ public class TextEncodeController {
         }
     }
 
-    //public void decodeSelectedFile() {
-        //if(selectedDecFile != null && key != null && fileExtension.getText() != null) {
-            //try {
-                //Path source = Paths.get(selectedDecFile.getAbsolutePath());
-                //Path target = Paths.get(System.getProperty("user.home") + "/Desktop");
-                //FileZIP.unzipFolder(source, target);
-                //File delete = new File(selectedDecFile.getAbsolutePath());
-                //delete.delete();
-                //FileEncryption.decryptFile(newPath, key, fileExtension.getText());
-                //selectedDecFilePath.setText(null);
-            //} catch (IOException e) {
-                //e.printStackTrace();
-            //} catch (GeneralSecurityException e) {
-                //e.printStackTrace();
-            //}
-        //} else {
-            //alert.setTitle("HATA!");
-            //alert.setHeaderText("Şifreleme Algoritması Hatası.");
-            //alert.setContentText("Dosya şifrelemek için önce bir anahtar belirlemeli ve şifrelenecek dosyayı seçmelisin.");
-            //alert.showAndWait();
-        //}
-    //}
+    /*public void decodeSelectedFile() {
+        if(selectedDecFile != null && key != null && fileExtension.getText() != null) {
+            try {
+                if(selectedDecFile.getName().contains("encrypted")) {
+                    Path source = Paths.get(selectedDecFile.getAbsolutePath());
+                    Path target = Paths.get(System.getProperty("user.home") + "/Desktop");
+                    FileZIP.unzipFolder(source, target);
+                    File delete = new File(selectedDecFile.getAbsolutePath());
+                    delete.delete();
+                    FileEncryption.decryptFile(newPath, key, fileExtension.getText());
+                    selectedDecFilePath.setText(null);
+                } else {
+                    selectedDecFilePath.setText(null);
+                    alert.setTitle("HATA!");
+                    alert.setHeaderText("Şifreleme Algoritması Hatası.");
+                    alert.setContentText("Yalnızca şifrelenmiş dosyaları içeren arşivleri seçebilirsin.");
+                    alert.showAndWait();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            }
+        } else {
+            alert.setTitle("HATA!");
+            alert.setHeaderText("Şifreleme Algoritması Hatası.");
+            alert.setContentText("Dosya şifrelemek için önce bir anahtar belirlemeli ve şifrelenecek dosyayı seçmelisin.");
+            alert.showAndWait();
+        }
+    }*/
 
     public void clearEncodedText() {
         plainTextArea.setText(null);
