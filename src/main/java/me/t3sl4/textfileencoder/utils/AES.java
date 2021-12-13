@@ -14,30 +14,24 @@ public class AES {
 
     private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;
-    private static final int SALT_LENGTH_BYTE = 16;
+    private static final int LENGTH_BYTE = 16;
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     public static String encrypt(byte[] pText, String password) throws Exception {
-
-        byte[] salt = AESKey.getRandomNonce(SALT_LENGTH_BYTE);
-
+        byte[] salt = AESKey.getRandomNonce(LENGTH_BYTE);
         byte[] iv = AESKey.getRandomNonce(IV_LENGTH_BYTE);
 
         SecretKey aesKeyFromPassword = AESKey.getAESKeyFromPassword(password.toCharArray(), salt);
-
         Cipher cipher = Cipher.getInstance(ENCRYPT_ALGO);
-
         cipher.init(Cipher.ENCRYPT_MODE, aesKeyFromPassword, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
 
         byte[] cipherText = cipher.doFinal(pText);
-
         byte[] cipherTextWithIvSalt = ByteBuffer.allocate(iv.length + salt.length + cipherText.length)
                 .put(iv)
                 .put(salt)
                 .put(cipherText)
                 .array();
         return Base64.getEncoder().encodeToString(cipherTextWithIvSalt);
-
     }
 
     public static String decrypt(String cText, String password) throws Exception {
@@ -46,7 +40,7 @@ public class AES {
 
         byte[] iv = new byte[IV_LENGTH_BYTE];
         bb.get(iv);
-        byte[] salt = new byte[SALT_LENGTH_BYTE];
+        byte[] salt = new byte[LENGTH_BYTE];
 
         bb.get(salt);
         byte[] cipherText = new byte[bb.remaining()];

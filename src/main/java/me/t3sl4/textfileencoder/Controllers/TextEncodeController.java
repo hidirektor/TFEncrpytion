@@ -1,15 +1,22 @@
 package me.t3sl4.textfileencoder.Controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextArea;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import me.t3sl4.textfileencoder.utils.AES;
 import me.t3sl4.textfileencoder.utils.SHA256;
 
@@ -32,12 +39,18 @@ public class TextEncodeController {
     @FXML
     private TextArea cipherTextArea;
 
+    @FXML
+    private TextField selectedKeyField;
+
     Alert alert = new Alert(Alert.AlertType.ERROR);
-
-    public String sha256CipherText;
-    public String spnCipherText;
-
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
+
+    public static String key;
+    public static String sha256CipherText;
+    public static String spnCipherText;
+    public static File selectedFile = null;
+
+    public static int keyStat = 0;
 
     public void sha256CheckBoxChange() throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if(!spnCheckBox.isSelected()) {
@@ -78,7 +91,7 @@ public class TextEncodeController {
             alert.setContentText("Programın temel mantığı zaten şifrelemek o yüzden lütfen yukarıdan bir tane şifreleme algoritması seç.");
             alert.showAndWait();
         } else {
-            if(keyTextArea.getText() != null) {
+            if(key != null) {
                 if(sha256CheckBox.isSelected()) {
                     if(textInput.getText() != null) {
                         sha256CipherText = SHA256.hashMac(textInput.getText(), keyTextArea.getText());
@@ -95,13 +108,53 @@ public class TextEncodeController {
             } else {
                 alert.setTitle("HATA!");
                 alert.setHeaderText("Şifreleme Algoritması Hatası.");
-                alert.setContentText("Lütfen şifreleme anahtarı gir. Aksi takdirde düzgün bir şifreleme elde edemezsin.");
+                alert.setContentText("Lütfen şifreleme anahtarı belirle. Aksi takdirde düzgün bir şifreleme elde edemezsin.");
                 alert.showAndWait();
             }
         }
     }
+
+    public void settingKey() {
+        if(keyTextArea.getText() != null) {
+            key = keyTextArea.getText();
+            selectedKeyField.setText("••••••••");
+            clrChoices();
+        } else {
+            alert.setTitle("HATA!");
+            alert.setHeaderText("Şifreleme Algoritması Hatası.");
+            alert.setContentText("Lütfen şifreleme anahtarı gir. Aksi takdirde düzgün bir şifreleme elde edemezsin.");
+            alert.showAndWait();
+        }
+    }
+
+    public void showKey() {
+        if(key != null) {
+            String tempKey = key;
+            if(keyStat == 0) {
+                selectedKeyField.setText(key);
+                keyStat = 1;
+            } else if(keyStat == 1) {
+                selectedKeyField.setText("••••••••");
+                keyStat = 0;
+            }
+        }
+    }
+
     public void sendButtonAction() {
         System.out.println("Mesaj Gönderildi!");
+    }
+
+    public void fileEncodingButton() throws IOException {
+        FileChooser ds = new FileChooser();
+        ds.getExtensionFilters().add(new FileChooser.ExtensionFilter("Sadece .txt, .dat, .gif", "*.txt", "*.dat", "*.gif"));
+        File d = ds.showOpenDialog(null);
+        if(d != null) {
+            selectedFile = d;
+        }
+    }
+
+    public void encodeSelectedFile() {
+
     }
 
     private void clrChoices() {
