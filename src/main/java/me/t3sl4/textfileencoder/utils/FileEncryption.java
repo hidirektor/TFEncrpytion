@@ -67,9 +67,11 @@ public class FileEncryption {
         encData = cipher.doFinal(decData);
 
 
-        FileOutputStream outStream = new FileOutputStream(new File(fileName + ".encrypted"));
+        File outFile = new File(fileName + ".encrypted");
+        FileOutputStream outStream = new FileOutputStream(outFile);
         outStream.write(encData);
         outStream.close();
+        FileZIP.compressFile(outFile.getAbsolutePath());
     }
 
     public static void decryptFile(String fileName, String pass, String fileFormat)
@@ -95,6 +97,7 @@ public class FileEncryption {
         fileName = fileName.replace(".encrypted", fileFormat);
         FileOutputStream target = new FileOutputStream(new File(fileName));
         target.write(decData);
+        inFile.delete();
         target.close();
     }
 }

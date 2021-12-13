@@ -9,13 +9,14 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 
 import javafx.stage.FileChooser;
 import me.t3sl4.textfileencoder.utils.AES;
 import me.t3sl4.textfileencoder.utils.FileEncryption;
-import me.t3sl4.textfileencoder.utils.FileZIP;
 import me.t3sl4.textfileencoder.utils.SHA256;
 
 public class TextEncodeController {
@@ -53,7 +54,7 @@ public class TextEncodeController {
     public static String sha256CipherText = null;
     public static String spnCipherText = null;
     public static File selectedFile = null;
-    public static String finalPath = null;
+    public static String newPath = null;
     public static String oldExtension = null;
 
     public static int keyStat = 0;
@@ -165,8 +166,8 @@ public class TextEncodeController {
     public void encodeSelectedFile() {
         if(selectedFile != null && key != null) {
             try {
-                fileExtension.setText(findExtension(selectedFile.getAbsolutePath()+".zip"));
-                FileEncryption.encryptFile(selectedFile.getAbsolutePath()+".zip", key);
+                fileExtension.setText(findExtension(selectedFile.getAbsolutePath()));
+                FileEncryption.encryptFile(selectedFile.getAbsolutePath(), key);
                 selectedFilePath.setText(null);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -180,6 +181,29 @@ public class TextEncodeController {
             alert.showAndWait();
         }
     }
+
+    //public void decodeSelectedFile() {
+        //if(selectedDecFile != null && key != null && fileExtension.getText() != null) {
+            //try {
+                //Path source = Paths.get(selectedDecFile.getAbsolutePath());
+                //Path target = Paths.get(System.getProperty("user.home") + "/Desktop");
+                //FileZIP.unzipFolder(source, target);
+                //File delete = new File(selectedDecFile.getAbsolutePath());
+                //delete.delete();
+                //FileEncryption.decryptFile(newPath, key, fileExtension.getText());
+                //selectedDecFilePath.setText(null);
+            //} catch (IOException e) {
+                //e.printStackTrace();
+            //} catch (GeneralSecurityException e) {
+                //e.printStackTrace();
+            //}
+        //} else {
+            //alert.setTitle("HATA!");
+            //alert.setHeaderText("Şifreleme Algoritması Hatası.");
+            //alert.setContentText("Dosya şifrelemek için önce bir anahtar belirlemeli ve şifrelenecek dosyayı seçmelisin.");
+            //alert.showAndWait();
+        //}
+    //}
 
     public void clearEncodedText() {
         plainTextArea.setText(null);

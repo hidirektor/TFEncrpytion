@@ -1,10 +1,18 @@
 package me.t3sl4.textfileencoder.utils;
 
+import me.t3sl4.textfileencoder.Controllers.TextEncodeController;
+
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class FileZIP {
+    public static String unzippedFile = null;
+
     public static void compressFile(String sourceFile) throws IOException {
         File delete = new File(sourceFile);
         FileOutputStream fos = new FileOutputStream(sourceFile+".zip");
@@ -26,5 +34,55 @@ public class FileZIP {
         fis.close();
         fos.close();
         delete.delete();
+    }
+
+    public static void unzipFolder(Path source, Path target) throws IOException {
+
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(source.toFile()))) {
+
+            ZipEntry zipEntry = zis.getNextEntry();
+
+            while (zipEntry != null) {
+
+                boolean isDirectory = false;
+
+                if (zipEntry.getName().endsWith(File.separator)) {
+                    isDirectory = true;
+                }
+
+                Path newPath = zipSlipProtect(zipEntry, target);
+
+                if (isDirectory) {
+                    Files.createDirectories(newPath);
+                } else {
+                    if (newPath.getParent() != null) {
+                        if (Files.notExists(newPath.getParent())) {
+                            Files.createDirectories(newPath.getParent());
+                        }
+                    }
+                    TextEncodeController.newPath = String.valueOf(newPath);
+                    Files.copy(zis, newPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+
+                zipEntry = zis.getNextEntry();
+
+            }
+            zis.closeEntry();
+
+        }
+
+    }
+
+    public static Path zipSlipProtect(ZipEntry zipEntry, Path targetDir)
+            throws IOException {
+
+        Path targetDirResolved = targetDir.resolve(zipEntry.getName());
+
+        Path normalizePath = targetDirResolved.normalize();
+        if (!normalizePath.startsWith(targetDir)) {
+            throw new IOException("Bad zip entry: " + zipEntry.getName());
+        }
+
+        return normalizePath;
     }
 }
