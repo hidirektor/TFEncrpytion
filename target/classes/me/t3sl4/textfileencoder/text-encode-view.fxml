@@ -52,6 +52,8 @@
                 <Button fx:id="setKey" layoutX="425.0" layoutY="108.0" mnemonicParsing="false" onAction="#settingKey" text="Anahtar Belirle" />
                 <TextField fx:id="selectedFilePath" editable="false" layoutX="141.0" layoutY="405.0" prefHeight="25.0" prefWidth="381.0" />
                 <TextField fx:id="selectedKeyField" editable="false" layoutX="476.0" layoutY="10.0" promptText="Belirlenen Anahtar" />
+                <TextField fx:id="fileExtension" editable="false" layoutX="425.0" layoutY="375.0" visible="false" />
+                <Button fx:id="clearButton" layoutX="563.0" layoutY="349.0" mnemonicParsing="false" onAction="#clearEncodedText" text="Temizle !" />
             </children>
         </AnchorPane>
     </children>

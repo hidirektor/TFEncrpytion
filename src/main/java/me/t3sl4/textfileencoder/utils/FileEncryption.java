@@ -1,4 +1,4 @@
-package me.t3sl4.textfileencoder.utils;
+package me.t3sl4.textfileencoderdemo.tfencoderdemo.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -92,7 +92,8 @@ public class FileEncryption {
             decData = Arrays.copyOfRange( decData , 0, decData.length - padCount);
         }
 
-        FileOutputStream target = new FileOutputStream(new File(fileName + ".decrypted" + fileFormat));
+        fileName = fileName.replace(".encrypted", fileFormat);
+        FileOutputStream target = new FileOutputStream(new File(fileName));
         target.write(decData);
         target.close();
     }

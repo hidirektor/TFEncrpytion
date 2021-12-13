@@ -5,17 +5,18 @@ import javafx.scene.control.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 import javafx.stage.FileChooser;
 import me.t3sl4.textfileencoder.utils.AES;
-import me.t3sl4.textfileencoder.utils.FileEncryption;
+import me.t3sl4.textfileencoder.utils.FileZIP;
 import me.t3sl4.textfileencoder.utils.SHA256;
+import me.t3sl4.textfileencoderdemo.tfencoderdemo.utils.FileEncryption;
 
 public class TextEncodeController {
     @FXML
@@ -42,6 +43,9 @@ public class TextEncodeController {
     @FXML
     private TextField selectedFilePath;
 
+    @FXML
+    private TextField fileExtension;
+
     Alert alert = new Alert(Alert.AlertType.ERROR);
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
@@ -49,6 +53,7 @@ public class TextEncodeController {
     public static String sha256CipherText = null;
     public static String spnCipherText = null;
     public static File selectedFile = null;
+    public static String finalPath = null;
     public static String oldExtension = null;
 
     public static int keyStat = 0;
@@ -95,14 +100,17 @@ public class TextEncodeController {
             if(key != null) {
                 if(sha256CheckBox.isSelected()) {
                     if(textInput.getText() != null) {
-                        sha256CipherText = SHA256.hashMac(textInput.getText(), keyTextArea.getText());
+                        sha256CipherText = SHA256.hashMac(textInput.getText(), key);
                         plainTextArea.setText(textInput.getText());
                         cipherTextArea.setText(sha256CipherText);
+                        PrintWriter writer = new PrintWriter("sha256plain.txt", "UTF-8");
+                        writer.println(textInput.getText());
+                        writer.close();
                         clrChoices();
                     }
                 } else if(spnCheckBox.isSelected()) {
-                    spnCipherText = AESencrypt(textInput.getText(), keyTextArea.getText());
-                    plainTextArea.setText(AESDecrypt(spnCipherText, keyTextArea.getText()));
+                    spnCipherText = AESencrypt(textInput.getText(), key);
+                    plainTextArea.setText(AESDecrypt(spnCipherText, key));
                     cipherTextArea.setText(spnCipherText);
                     clrChoices();
                 }
@@ -157,8 +165,9 @@ public class TextEncodeController {
     public void encodeSelectedFile() {
         if(selectedFile != null && key != null) {
             try {
-                FileEncryption.encryptFile(selectedFile.getAbsolutePath(), key);
-                //FileEncryption.decryptFile(selectedFile.getAbsolutePath(), key, findExtension(selectedFile.getName()));
+                finalPath = FileZIP.compressFile(selectedFile.getAbsolutePath());
+                fileExtension.setText(findExtension(finalPath));
+                FileEncryption.encryptFile(finalPath, key);
                 selectedFilePath.setText(null);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -171,6 +180,11 @@ public class TextEncodeController {
             alert.setContentText("Dosya şifrelemek için önce bir anahtar belirlemeli ve şifrelenecek dosyayı seçmelisin.");
             alert.showAndWait();
         }
+    }
+
+    public void clearEncodedText() {
+        plainTextArea.setText(null);
+        cipherTextArea.setText(null);
     }
 
     private void clrChoices() {
