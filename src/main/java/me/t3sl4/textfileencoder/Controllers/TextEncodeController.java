@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import javafx.stage.FileChooser;
 import me.t3sl4.textfileencoder.utils.AES;
 import me.t3sl4.textfileencoder.utils.FileEncryption;
+import me.t3sl4.textfileencoder.utils.FileZIP;
 import me.t3sl4.textfileencoder.utils.SHA256;
 
 public class TextEncodeController {
@@ -182,7 +183,7 @@ public class TextEncodeController {
         }
     }
 
-    /*public void decodeSelectedFile() {
+    public void decodeSelectedFile(File selectedDecFile) {
         if(selectedDecFile != null && key != null && fileExtension.getText() != null) {
             try {
                 if(selectedDecFile.getName().contains("encrypted")) {
@@ -192,9 +193,7 @@ public class TextEncodeController {
                     File delete = new File(selectedDecFile.getAbsolutePath());
                     delete.delete();
                     FileEncryption.decryptFile(newPath, key, fileExtension.getText());
-                    selectedDecFilePath.setText(null);
                 } else {
-                    selectedDecFilePath.setText(null);
                     alert.setTitle("HATA!");
                     alert.setHeaderText("Şifreleme Algoritması Hatası.");
                     alert.setContentText("Yalnızca şifrelenmiş dosyaları içeren arşivleri seçebilirsin.");
@@ -211,7 +210,11 @@ public class TextEncodeController {
             alert.setContentText("Dosya şifrelemek için önce bir anahtar belirlemeli ve şifrelenecek dosyayı seçmelisin.");
             alert.showAndWait();
         }
-    }*/
+    }
+
+    public void connectionButton() {
+
+    }
 
     public void clearEncodedText() {
         plainTextArea.setText(null);

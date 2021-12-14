@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="640.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.t3sl4.textfileencoder.Controllers.TextEncodeController">
+<VBox prefHeight="480.0" prefWidth="1120.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.t3sl4.textfileencoder.Controllers.TextEncodeController">
     <children>
         <MenuBar>
             <menus>
@@ -26,7 +26,7 @@
                 <TextArea fx:id="textInput" layoutX="31.0" layoutY="57.0" onKeyPressed="#textInputPressed" prefHeight="40.0" prefWidth="279.0" promptText="Lütfen şifrelemek istediğiniz metni girin..." />
                 <TextArea fx:id="plainTextArea" layoutX="14.0" layoutY="146.0" prefHeight="200.0" prefWidth="297.0" promptText="Metnin normal hali..." />
                 <TextArea fx:id="cipherTextArea" layoutX="324.0" layoutY="146.0" prefHeight="200.0" prefWidth="297.0" promptText="Metnin şifrelenmiş hali..." />
-                <Button fx:id="sendButton" layoutX="292.0" layoutY="582.0" mnemonicParsing="false" onAction="#sendButtonAction" text="Gönder !" />
+                <Button fx:id="sendButton" layoutX="884.0" layoutY="344.0" mnemonicParsing="false" onAction="#sendButtonAction" text="Gönder !" />
                 <Button fx:id="encrypButton" layoutX="126.0" layoutY="108.0" mnemonicParsing="false" onAction="#encryptPlainText" text="Şifrele !" />
                 <TextArea fx:id="keyTextArea" layoutX="324.0" layoutY="57.0" prefHeight="40.0" prefWidth="279.0" promptText="Lütfen anahtar girin..." />
                 <Button fx:id="fileEncodingButton" layoutX="58.0" layoutY="405.0" mnemonicParsing="false" onAction="#fileEncodingButton" text="Choose File" />
@@ -41,12 +41,12 @@
                     </font>
                 </Label>
                 <Button fx:id="encodeFile" layoutX="530.0" layoutY="405.0" mnemonicParsing="false" onAction="#encodeSelectedFile" text="Şifrele !" />
-                <Label layoutX="43.0" layoutY="465.0" text="Send Section">
+                <Label layoutX="635.0" layoutY="227.0" text="Send Section">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Label>
-                <ListView layoutX="156.0" layoutY="476.0" prefHeight="99.0" prefWidth="352.0" />
+                <ListView layoutX="748.0" layoutY="238.0" prefHeight="99.0" prefWidth="352.0" />
                 <Label layoutX="292.0" layoutY="387.0" text="Selected File" />
                 <CheckBox fx:id="showKeyField" layoutX="428.0" layoutY="14.0" mnemonicParsing="false" onAction="#showKey" text="Key" />
                 <Button fx:id="setKey" layoutX="425.0" layoutY="108.0" mnemonicParsing="false" onAction="#settingKey" text="Anahtar Belirle" />
@@ -54,6 +54,13 @@
                 <TextField fx:id="selectedKeyField" editable="false" layoutX="476.0" layoutY="10.0" promptText="Belirlenen Anahtar" />
                 <TextField fx:id="fileExtension" editable="false" layoutX="425.0" layoutY="375.0" visible="false" />
                 <Button fx:id="clearButton" layoutX="563.0" layoutY="349.0" mnemonicParsing="false" onAction="#clearEncodedText" text="Temizle !" />
+                <Label layoutX="635.0" layoutY="88.0" text="Connection Section">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="nicknameField" layoutX="764.0" layoutY="120.0" promptText="Kullanıcı adı belirle..." />
+                <Button fx:id="connectButton" layoutX="946.0" layoutY="120.0" mnemonicParsing="false" onAction="#connectionButton" text="Bağlan !" />
             </children>
         </AnchorPane>
     </children>
