@@ -23,7 +23,7 @@
             <children>
                 <CheckBox fx:id="sha256CheckBox" layoutX="197.0" layoutY="31.0" mnemonicParsing="false" onAction="#sha256CheckBoxChange" text="SHA-256" />
                 <CheckBox fx:id="spnCheckBox" layoutX="372.0" layoutY="31.0" mnemonicParsing="false" onAction="#spnCheckBoxChange" text="SPN (AES)" />
-                <TextArea fx:id="textInput" layoutX="31.0" layoutY="57.0" onKeyPressed="#textInputPressed" prefHeight="40.0" prefWidth="279.0" promptText="Lütfen şifrelemek istediğiniz metni girin..." />
+                <TextArea fx:id="textInput" layoutX="31.0" layoutY="57.0" prefHeight="40.0" prefWidth="279.0" promptText="Lütfen şifrelemek istediğiniz metni girin..." />
                 <TextArea fx:id="plainTextArea" layoutX="14.0" layoutY="146.0" prefHeight="200.0" prefWidth="297.0" promptText="Metnin normal hali..." />
                 <TextArea fx:id="cipherTextArea" layoutX="324.0" layoutY="146.0" prefHeight="200.0" prefWidth="297.0" promptText="Metnin şifrelenmiş hali..." />
                 <Button fx:id="sendButton" layoutX="884.0" layoutY="344.0" mnemonicParsing="false" onAction="#sendButtonAction" text="Gönder !" />

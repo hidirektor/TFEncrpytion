@@ -7,14 +7,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Scanner;
 
 import javafx.stage.FileChooser;
+import me.t3sl4.textfileencoder.Server.Client;
 import me.t3sl4.textfileencoder.utils.AES;
 import me.t3sl4.textfileencoder.utils.FileEncryption;
 import me.t3sl4.textfileencoder.utils.FileZIP;
@@ -22,10 +25,7 @@ import me.t3sl4.textfileencoder.utils.SHA256;
 
 public class TextEncodeController {
     @FXML
-    private CheckBox sha256CheckBox;
-
-    @FXML
-    private CheckBox spnCheckBox;
+    private TextField selectedKeyField;
 
     @FXML
     private TextArea textInput;
@@ -40,10 +40,16 @@ public class TextEncodeController {
     private TextArea cipherTextArea;
 
     @FXML
-    private TextField selectedKeyField;
+    private TextField selectedFilePath;
 
     @FXML
-    private TextField selectedFilePath;
+    private TextField nicknameField;
+
+    @FXML
+    private CheckBox sha256CheckBox;
+
+    @FXML
+    private CheckBox spnCheckBox;
 
     @FXML
     private TextField fileExtension;
@@ -56,9 +62,21 @@ public class TextEncodeController {
     public static String spnCipherText = null;
     public static File selectedFile = null;
     public static String newPath = null;
-    public static String oldExtension = null;
+    public static boolean connectionStatus = false;
 
     public static int keyStat = 0;
+
+    public void showKey() {
+        if(key != null) {
+            if(keyStat == 0) {
+                selectedKeyField.setText(key);
+                keyStat = 1;
+            } else if(keyStat == 1) {
+                selectedKeyField.setText("••••••••");
+                keyStat = 0;
+            }
+        }
+    }
 
     public void sha256CheckBoxChange() throws UnsupportedEncodingException, NoSuchAlgorithmException {
         if(!spnCheckBox.isSelected()) {
@@ -86,10 +104,6 @@ public class TextEncodeController {
             alert.setContentText("Aynı anda sadece tek bir şifreleme algoritması seçebilirsin.");
             alert.showAndWait();
         }
-    }
-
-    public void textInputPressed() {
-        String textInputPre = textInput.getText();
     }
 
     public void encryptPlainText() throws Exception {
@@ -138,20 +152,9 @@ public class TextEncodeController {
         }
     }
 
-    public void showKey() {
-        if(key != null) {
-            if(keyStat == 0) {
-                selectedKeyField.setText(key);
-                keyStat = 1;
-            } else if(keyStat == 1) {
-                selectedKeyField.setText("••••••••");
-                keyStat = 0;
-            }
-        }
-    }
-
-    public void sendButtonAction() {
-        System.out.println("Mesaj Gönderildi!");
+    public void clearEncodedText() {
+        plainTextArea.setText(null);
+        cipherTextArea.setText(null);
     }
 
     public void fileEncodingButton() throws IOException {
@@ -183,6 +186,36 @@ public class TextEncodeController {
         }
     }
 
+    public void connectionButton() throws IOException {
+        System.out.println(nicknameField.getText());
+        if(nicknameField.getText() != null) {
+            String username = nicknameField.getText();
+            Socket socket = new Socket("localhost", 1234);
+            Client client = new Client(socket, username);
+            connectionStatus = true;
+            //client.listenForMessage();
+            //client.sendMessage();
+        } else {
+            alert.setTitle("HATA!");
+            alert.setHeaderText("Kullanıcı Adı Hatası.");
+            alert.setContentText("Sunucuya bağlanmak için önce bir kullanıcı adı belirlemelisin.");
+            alert.showAndWait();
+        }
+    }
+
+    public void sendButtonAction() throws IOException {
+        if(connectionStatus) {
+            System.out.println("Mesaj gönderildi !");
+        } else {
+            alert.setTitle("HATA!");
+            alert.setHeaderText("Bağlantı Hatası.");
+            alert.setContentText("Mesaj || dosya göndermek için önce sunucuya bağlanmalısın.");
+            alert.showAndWait();
+        }
+    }
+
+    //Gerekli fonksiyonlar:
+
     public void decodeSelectedFile(File selectedDecFile) {
         if(selectedDecFile != null && key != null && fileExtension.getText() != null) {
             try {
@@ -210,15 +243,6 @@ public class TextEncodeController {
             alert.setContentText("Dosya şifrelemek için önce bir anahtar belirlemeli ve şifrelenecek dosyayı seçmelisin.");
             alert.showAndWait();
         }
-    }
-
-    public void connectionButton() {
-
-    }
-
-    public void clearEncodedText() {
-        plainTextArea.setText(null);
-        cipherTextArea.setText(null);
     }
 
     private void clrChoices() {

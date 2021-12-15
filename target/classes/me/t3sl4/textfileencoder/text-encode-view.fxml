@@ -59,7 +59,7 @@
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Label>
-                <TextField fx:id="nicknameField" layoutX="764.0" layoutY="120.0" promptText="Kullanıcı adı belirle..." />
+                <TextField fx:id="nicknameField" layoutX="764.0" layoutY="120.0" onMouseClicked="#clickedUsernameField" promptText="Kullanıcı adı belirle..." />
                 <Button fx:id="connectButton" layoutX="946.0" layoutY="120.0" mnemonicParsing="false" onAction="#connectionButton" text="Bağlan !" />
             </children>
         </AnchorPane>
