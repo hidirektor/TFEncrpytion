@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TextFileEncoder.iml" filepath="$PROJECT_DIR$/TextFileEncoder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TFEncoderAlgorithm.iml" filepath="$PROJECT_DIR$/TFEncoderAlgorithm.iml" />
     </modules>
   </component>
 </project>
