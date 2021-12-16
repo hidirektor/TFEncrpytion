@@ -1,5 +1,9 @@
 package me.t3sl4.textfileencoder.Server;
 
+import me.t3sl4.textfileencoder.Controllers.TextEncodeController;
+import me.t3sl4.textfileencoder.utils.AES;
+import org.w3c.dom.Text;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
@@ -28,15 +32,20 @@ public class Client {
             bufferedWriter.newLine();
             bufferedWriter.flush();
 
-            Scanner scanner = new Scanner(System.in);
             while(socket.isConnected()) {
-                String messageToSend = scanner.nextLine();
-                bufferedWriter.write(username + ": " + messageToSend);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
+                if(TextEncodeController.sha256CipherText != null) {
+
+                } else if(TextEncodeController.spnCipherText != null) {
+                    String messageToSend = TextEncodeController.spnCipherText;
+                    bufferedWriter.write(username + ": " + messageToSend);
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                }
             }
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -49,8 +58,10 @@ public class Client {
                 while(socket.isConnected()) {
                     try {
                         msgFromGroupChat = bufferedReader.readLine();
+                        //TextEncodeController.cipherTextArea.setText(msgFromGroupChat);
+                        //TextEncodeController.plainTextArea.setText(AES.decrypt(msgFromGroupChat, TextEncodeController.key));
                         System.out.println(msgFromGroupChat);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         closeEverything(socket, bufferedReader, bufferedWriter);
                     }
                 }

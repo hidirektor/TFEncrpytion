@@ -1,6 +1,7 @@
 package me.t3sl4.textfileencoder.Controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.io.File;
@@ -8,14 +9,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import me.t3sl4.textfileencoder.Server.Client;
 import me.t3sl4.textfileencoder.utils.AES;
@@ -23,7 +28,7 @@ import me.t3sl4.textfileencoder.utils.FileEncryption;
 import me.t3sl4.textfileencoder.utils.FileZIP;
 import me.t3sl4.textfileencoder.utils.SHA256;
 
-public class TextEncodeController {
+public class TextEncodeController implements Initializable {
     @FXML
     private TextField selectedKeyField;
 
@@ -34,10 +39,10 @@ public class TextEncodeController {
     private TextArea keyTextArea;
 
     @FXML
-    private TextArea plainTextArea;
+    public TextArea plainTextArea;
 
     @FXML
-    private TextArea cipherTextArea;
+    public TextArea cipherTextArea;
 
     @FXML
     private TextField selectedFilePath;
@@ -54,6 +59,12 @@ public class TextEncodeController {
     @FXML
     private TextField fileExtension;
 
+    @FXML
+    private ImageView textEncryptionImageView;
+
+    @FXML
+    private ImageView fileEncryptionImageView;
+
     Alert alert = new Alert(Alert.AlertType.ERROR);
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
@@ -64,7 +75,15 @@ public class TextEncodeController {
     public static String newPath = null;
     public static boolean connectionStatus = false;
 
+    private Image FirstTick = new Image("https://i.imgur.com/I1RLGli.png");
+    private Image SecTick = new Image("https://i.imgur.com/hOS8sOI.png");
+
     public static int keyStat = 0;
+
+    public void initialize(URL location, ResourceBundle resources) {
+        textEncryptionImageView.setImage(SecTick);
+        fileEncryptionImageView.setImage(SecTick);
+    }
 
     public void showKey() {
         if(key != null) {
@@ -119,6 +138,7 @@ public class TextEncodeController {
                         sha256CipherText = SHA256.hashMac(textInput.getText(), key);
                         plainTextArea.setText(textInput.getText());
                         cipherTextArea.setText(sha256CipherText);
+                        textEncryptionImageView.setImage(FirstTick);
                         PrintWriter writer = new PrintWriter("sha256plain.txt", "UTF-8");
                         writer.println(textInput.getText());
                         writer.close();
@@ -128,6 +148,7 @@ public class TextEncodeController {
                     spnCipherText = AESencrypt(textInput.getText(), key);
                     plainTextArea.setText(AESDecrypt(spnCipherText, key));
                     cipherTextArea.setText(spnCipherText);
+                    textEncryptionImageView.setImage(FirstTick);
                     clrChoices();
                 }
             } else {
@@ -155,6 +176,11 @@ public class TextEncodeController {
     public void clearEncodedText() {
         plainTextArea.setText(null);
         cipherTextArea.setText(null);
+        textEncryptionImageView.setImage(SecTick);
+    }
+
+    public void clearEncodedFile() {
+        fileEncryptionImageView.setImage(SecTick);
     }
 
     public void fileEncodingButton() throws IOException {
@@ -172,6 +198,7 @@ public class TextEncodeController {
             try {
                 fileExtension.setText(findExtension(selectedFile.getAbsolutePath()));
                 FileEncryption.encryptFile(selectedFile.getAbsolutePath(), key);
+                fileEncryptionImageView.setImage(FirstTick);
                 selectedFilePath.setText(null);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -187,24 +214,28 @@ public class TextEncodeController {
     }
 
     public void connectionButton() throws IOException {
-        System.out.println(nicknameField.getText());
-        if(nicknameField.getText() != null) {
-            String username = nicknameField.getText();
-            Socket socket = new Socket("localhost", 1234);
-            Client client = new Client(socket, username);
-            connectionStatus = true;
-            //client.listenForMessage();
-            //client.sendMessage();
-        } else {
-            alert.setTitle("HATA!");
-            alert.setHeaderText("Kullanıcı Adı Hatası.");
-            alert.setContentText("Sunucuya bağlanmak için önce bir kullanıcı adı belirlemelisin.");
-            alert.showAndWait();
-        }
+        //if(connectionStatus != true) {
+            if(!nicknameField.getText().trim().isEmpty()) {
+                String username = nicknameField.getText();
+                Socket socket = new Socket("localhost", 1234);
+                Client client = new Client(socket, username);
+                connectionStatus = true;
+                //client.listenForMessage();
+                //client.sendMessage();
+            } else {
+                alert.setTitle("HATA!");
+                alert.setHeaderText("Kullanıcı Adı Hatası.");
+                alert.setContentText("Sunucuya bağlanmak için önce bir kullanıcı adı belirlemelisin.");
+                alert.showAndWait();
+            }
+        //}
     }
 
     public void sendButtonAction() throws IOException {
         if(connectionStatus) {
+            //Mesaj gönderme kısmı
+            clearEncodedText();
+            clearEncodedFile();
             System.out.println("Mesaj gönderildi !");
         } else {
             alert.setTitle("HATA!");
@@ -273,5 +304,9 @@ public class TextEncodeController {
             extension = fileName.substring(index + 1);
         }
         return "." + extension;
+    }
+
+    private void disconnectSocket(Socket socket) throws IOException {
+        socket.close();
     }
 }

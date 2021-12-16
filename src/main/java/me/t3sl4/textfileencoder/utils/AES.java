@@ -1,7 +1,6 @@
 package me.t3sl4.textfileencoder.utils;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -52,7 +51,6 @@ public class AES {
 
         byte[] plainText = cipher.doFinal(cipherText);
         return new String(plainText, UTF_8);
-
     }
 
 }

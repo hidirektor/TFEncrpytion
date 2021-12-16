@@ -1,5 +1,7 @@
 package me.t3sl4.textfileencoder.Server;
 
+import me.t3sl4.textfileencoder.Controllers.TextEncodeController;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -63,6 +65,7 @@ public class ClientHandler implements Runnable {
 
     public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         removeClientHandler();
+        TextEncodeController.connectionStatus = false;
         try {
             if(bufferedReader != null) {
                 bufferedReader.close();
