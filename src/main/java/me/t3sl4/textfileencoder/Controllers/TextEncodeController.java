@@ -183,6 +183,14 @@ public class TextEncodeController implements Initializable {
         fileEncryptionImageView.setImage(SecTick);
     }
 
+    public void clearAllAction() {
+        plainTextArea.setText(null);
+        cipherTextArea.setText(null);
+        clrChoices();
+        textEncryptionImageView.setImage(SecTick);
+        fileEncryptionImageView.setImage(SecTick);
+    }
+
     public void fileEncodingButton() throws IOException {
         FileChooser ds = new FileChooser();
         ds.getExtensionFilters().add(new FileChooser.ExtensionFilter("Sadece .txt, .dat, .gif", "*.txt", "*.dat", "*.gif", "*.encrypted"));
