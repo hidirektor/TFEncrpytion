@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="640.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.t3sl4.textfileencoderdemo.tfencoderdemo.MainController">
+<VBox prefHeight="640.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.t3sl4.textfileencoderdemo.MainController">
     <children>
         <MenuBar>
             <menus>
-                <Menu mnemonicParsing="false" text="Developed by Halil İbrahim Direktör" />
+                <Menu mnemonicParsing="false" text="Developed by H.İ.D." />
             </menus>
         </MenuBar>
         <AnchorPane fx:id="textEncodePane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="640.0" prefWidth="640.0">

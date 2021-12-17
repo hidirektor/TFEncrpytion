@@ -61,7 +61,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                me.t3sl4.textfileencoderdemo.tfencoderdemo/me.t3sl4.textfileencoderdemo.tfencoderdemo.Main
+                                me.t3sl4.textfileencoderdemo.tfencoderdemo/me.t3sl4.textfileencoderdemo.Main
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

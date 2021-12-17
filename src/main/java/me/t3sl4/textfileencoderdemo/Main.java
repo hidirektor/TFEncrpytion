@@ -1,4 +1,4 @@
-package me.t3sl4.textfileencoderdemo.tfencoderdemo;
+package me.t3sl4.textfileencoderdemo;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

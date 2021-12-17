@@ -1,4 +1,4 @@
-package me.t3sl4.textfileencoderdemo.tfencoderdemo.utils;
+package me.t3sl4.textfileencoderdemo.utils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;

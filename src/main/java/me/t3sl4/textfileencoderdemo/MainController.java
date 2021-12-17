@@ -1,4 +1,4 @@
-package me.t3sl4.textfileencoderdemo.tfencoderdemo;
+package me.t3sl4.textfileencoderdemo;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -9,14 +9,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 import javafx.stage.FileChooser;
-import me.t3sl4.textfileencoderdemo.tfencoderdemo.utils.AES;
-import me.t3sl4.textfileencoderdemo.tfencoderdemo.utils.FileEncryption;
-import me.t3sl4.textfileencoderdemo.tfencoderdemo.utils.FileZIP;
-import me.t3sl4.textfileencoderdemo.tfencoderdemo.utils.SHA256;
+import me.t3sl4.textfileencoderdemo.utils.AES;
+import me.t3sl4.textfileencoderdemo.utils.FileEncryption;
+import me.t3sl4.textfileencoderdemo.utils.FileZIP;
+import me.t3sl4.textfileencoderdemo.utils.SHA256;
 
 public class MainController {
     @FXML

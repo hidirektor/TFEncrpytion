@@ -1,6 +1,6 @@
-package me.t3sl4.textfileencoderdemo.tfencoderdemo.utils;
+package me.t3sl4.textfileencoderdemo.utils;
 
-import me.t3sl4.textfileencoderdemo.tfencoderdemo.MainController;
+import me.t3sl4.textfileencoderdemo.MainController;
 
 import java.io.*;
 import java.nio.file.Files;
