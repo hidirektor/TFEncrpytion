@@ -1,7 +1,5 @@
 package me.t3sl4.textfileencoder.Server;
 
-import me.t3sl4.textfileencoder.Controllers.TextEncodeController;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -30,7 +28,6 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         String messageFromClient;
-
         while(socket.isConnected()) {
             try {
                 messageFromClient = bufferedReader.readLine();
@@ -45,13 +42,11 @@ public class ClientHandler implements Runnable {
     public void broadcastMessage(String messageToSend) {
         for(ClientHandler clientHandler : clientHandlers) {
             try {
-                if(!clientHandler.clientUsername.equals(clientUsername)) {
-                    //TODO
-                    //Önce anahtarı kontrol ettir ardından decrypt et.
+                //if(!clientHandler.clientUsername.equals(clientUsername)) {
                     clientHandler.bufferedWriter.write(messageToSend);
                     clientHandler.bufferedWriter.newLine();
                     clientHandler.bufferedWriter.flush();
-                }
+                //}
             } catch(IOException e) {
                 closeEverything(socket, bufferedReader, bufferedWriter);
             }
@@ -65,7 +60,6 @@ public class ClientHandler implements Runnable {
 
     public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         removeClientHandler();
-        TextEncodeController.connectionStatus = false;
         try {
             if(bufferedReader != null) {
                 bufferedReader.close();
@@ -81,4 +75,3 @@ public class ClientHandler implements Runnable {
         }
     }
 }
-

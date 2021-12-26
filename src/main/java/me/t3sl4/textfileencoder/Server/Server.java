@@ -25,7 +25,7 @@ public class Server {
                 thread.start();
             }
         } catch(IOException e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -36,12 +36,12 @@ public class Server {
                 serverStatus = false;
             }
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
     }
 
     public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(1234);
+        ServerSocket serverSocket = new ServerSocket(1334);
         Server server = new Server(serverSocket);
         server.startServer();
     }

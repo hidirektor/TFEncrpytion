@@ -1,4 +1,4 @@
-package me.t3sl4.textfileencoder.utils;
+package me.t3sl4.textfileencoder.Utils;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;

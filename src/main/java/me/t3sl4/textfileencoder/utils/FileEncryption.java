@@ -1,10 +1,6 @@
-package me.t3sl4.textfileencoder.utils;
+package me.t3sl4.textfileencoder.Utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import javax.crypto.Cipher;
@@ -82,7 +78,7 @@ public class FileEncryption {
 
         Cipher cipher = FileEncryption.makeCipher(pass, false);
 
-        FileInputStream inStream = new FileInputStream(inFile );
+        FileInputStream inStream = new FileInputStream(inFile);
         encData = new byte[(int)inFile.length()];
         inStream.read(encData);
         inStream.close();

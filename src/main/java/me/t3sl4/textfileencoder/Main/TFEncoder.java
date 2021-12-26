@@ -1,10 +1,11 @@
-package me.t3sl4.textfileencoder;
+package me.t3sl4.textfileencoder.Main;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import me.t3sl4.textfileencoder.Runner;
 
 import java.io.IOException;
 
@@ -14,7 +15,7 @@ public class TFEncoder extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(TFEncoder.class.getResource("tfencoder-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Runner.class.getResource("tfencoder.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1120, 480);
         stage.getIcons().add(TFEncoderIcon);
         stage.setTitle("TFEncoder");

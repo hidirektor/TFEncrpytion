@@ -1,18 +1,10 @@
 package me.t3sl4.textfileencoder;
 
-import me.t3sl4.textfileencoder.Server.Server;
-
-import java.io.IOException;
+import me.t3sl4.textfileencoder.Main.TFEncoder;
 
 public class Runner {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         TFEncoder.main(args);
-        /*if(!Server.serverStatus) {
-            Server.main(args);
-            Server.serverStatus = true;
-        } else {
-            System.out.println("Server is already opened !");
-        }*/
     }
 }

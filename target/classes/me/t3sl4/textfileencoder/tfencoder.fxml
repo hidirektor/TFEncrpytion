@@ -22,11 +22,11 @@
         <AnchorPane fx:id="textEncodePane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="640.0" prefWidth="640.0">
             <children>
                 <CheckBox fx:id="sha256CheckBox" layoutX="197.0" layoutY="31.0" mnemonicParsing="false" onAction="#sha256CheckBoxChange" text="SHA-256" />
-                <CheckBox fx:id="spnCheckBox" layoutX="372.0" layoutY="31.0" mnemonicParsing="false" onAction="#spnCheckBoxChange" text="SPN (AES)" />
+                <CheckBox fx:id="spnCheckBox" layoutX="372.0" layoutY="31.0" mnemonicParsing="false" onAction="#spnCheckBoxChange" text="SPN" />
                 <TextArea fx:id="textInput" layoutX="31.0" layoutY="57.0" prefHeight="40.0" prefWidth="279.0" promptText="Lütfen şifrelemek istediğiniz metni girin..." />
                 <TextArea fx:id="plainTextArea" layoutX="14.0" layoutY="146.0" prefHeight="200.0" prefWidth="297.0" promptText="Metnin normal hali..." />
                 <TextArea fx:id="cipherTextArea" layoutX="324.0" layoutY="146.0" prefHeight="200.0" prefWidth="297.0" promptText="Metnin şifrelenmiş hali..." />
-                <Button fx:id="sendButton" layoutX="824.0" layoutY="339.0" mnemonicParsing="false" onAction="#sendButtonAction" text="Gönder !" />
+                <Button fx:id="sendButton" layoutX="825.0" layoutY="128.0" mnemonicParsing="false" onAction="#sendButtonAction" text="Gönder !" />
                 <Button fx:id="encrypButton" layoutX="126.0" layoutY="108.0" mnemonicParsing="false" onAction="#encryptPlainText" text="Şifrele !" />
                 <TextArea fx:id="keyTextArea" layoutX="324.0" layoutY="57.0" prefHeight="40.0" prefWidth="279.0" promptText="Lütfen anahtar girin..." />
                 <Button fx:id="fileEncodingButton" layoutX="23.0" layoutY="406.0" mnemonicParsing="false" onAction="#fileEncodingButton" text="Choose File" />
@@ -41,7 +41,7 @@
                     </font>
                 </Label>
                 <Button fx:id="encodeFile" layoutX="495.0" layoutY="406.0" mnemonicParsing="false" onAction="#encodeSelectedFile" text="Şifrele !" />
-                <Label layoutX="640.0" layoutY="330.0" text="Send Section">
+                <Label layoutX="634.0" layoutY="124.0" text="Send Section">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
@@ -52,32 +52,46 @@
                 <TextField fx:id="selectedFilePath" editable="false" layoutX="106.0" layoutY="406.0" prefHeight="25.0" prefWidth="381.0" />
                 <TextField fx:id="selectedKeyField" editable="false" layoutX="476.0" layoutY="10.0" promptText="Belirlenen Anahtar" />
                 <TextField fx:id="fileExtension" editable="false" layoutX="425.0" layoutY="375.0" visible="false" />
-                <Button fx:id="clearButton" layoutX="563.0" layoutY="349.0" mnemonicParsing="false" onAction="#clearEncodedText" text="Temizle !" />
-                <Label layoutX="640.0" layoutY="246.0" text="Connection Section">
+                <Button fx:id="clearButton" layoutX="730.0" layoutY="371.0" mnemonicParsing="false" onAction="#clearEncodedText" text="Clear Encoded Text !" />
+                <Label layoutX="634.0" layoutY="14.0" text="Connection Section">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Label>
-                <TextField fx:id="nicknameField" layoutX="769.0" layoutY="278.0" promptText="Kullanıcı adı belirle..." />
-                <Button fx:id="connectButton" layoutX="951.0" layoutY="278.0" mnemonicParsing="false" onAction="#connectionButton" text="Bağlan !" />
-                <Label layoutX="639.0" layoutY="48.0" text="Encryption Status">
+                <TextField fx:id="nicknameField" layoutX="717.0" layoutY="77.0" prefHeight="25.0" prefWidth="279.0" promptText="Kullanıcı adı belirle..." />
+                <Button fx:id="connectButton" layoutX="1002.0" layoutY="77.0" mnemonicParsing="false" onAction="#connectionButton" text="Bağlan !" />
+                <Label layoutX="634.0" layoutY="172.0" text="Status Section:">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Label>
-                <Label layoutX="689.0" layoutY="99.0" text="Text Encryption :">
+                <Label layoutX="866.0" layoutY="284.0" text="Text Encryption :">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Label>
-                <Label layoutX="694.0" layoutY="177.0" text="File Encryption :">
+                <Label layoutX="631.0" layoutY="286.0" text="File Encryption :">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Label>
-                <ImageView fx:id="textEncryptionImageView" fitHeight="69.0" fitWidth="99.0" layoutX="821.0" layoutY="75.0" pickOnBounds="true" preserveRatio="true" />
-                <ImageView fx:id="fileEncryptionImageView" fitHeight="76.0" fitWidth="99.0" layoutX="821.0" layoutY="148.0" pickOnBounds="true" preserveRatio="true" />
-                <Button fx:id="clearButtonFile" layoutX="563.0" layoutY="406.0" mnemonicParsing="false" onAction="#clearEncodedFile" text="Temizle !" />
+                <ImageView fx:id="textEncryptionImageView" fitHeight="69.0" fitWidth="99.0" layoutX="998.0" layoutY="260.0" pickOnBounds="true" preserveRatio="true" />
+                <ImageView fx:id="fileEncryptionImageView" fitHeight="76.0" fitWidth="99.0" layoutX="758.0" layoutY="257.0" pickOnBounds="true" preserveRatio="true" />
+                <Button fx:id="clearButtonFile" layoutX="878.0" layoutY="371.0" mnemonicParsing="false" onAction="#clearEncodedFile" text="Clear Encoded File !" />
+                <Button layoutX="811.0" layoutY="415.0" mnemonicParsing="false" onAction="#clearAllAction" text="Tümünü Temizle !" />
+                <Button layoutX="739.0" layoutY="44.0" mnemonicParsing="false" onAction="#startServer" text="Sunucuyu Başlat !" />
+                <Button layoutX="864.0" layoutY="44.0" mnemonicParsing="false" onAction="#stopServer" text="Sunucuyu Durdur !" />
+                <Label layoutX="784.0" layoutY="201.0" text="Server:">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+                <ImageView fx:id="serverStatusImageView" fitHeight="76.0" fitWidth="99.0" layoutX="846.0" layoutY="172.0" pickOnBounds="true" preserveRatio="true" />
+                <Label layoutX="629.0" layoutY="349.0" text="Clear Section:">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
             </children>
         </AnchorPane>
     </children>
