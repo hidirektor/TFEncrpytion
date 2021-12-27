@@ -41,7 +41,7 @@
                     </font>
                 </Label>
                 <Button fx:id="encodeFile" layoutX="495.0" layoutY="406.0" mnemonicParsing="false" onAction="#encodeSelectedFile" text="Şifrele !" />
-                <Label layoutX="634.0" layoutY="124.0" text="Send Section">
+                <Label layoutX="631.0" layoutY="124.0" text="Send Section">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
@@ -60,7 +60,7 @@
                 </Label>
                 <TextField fx:id="nicknameField" layoutX="717.0" layoutY="77.0" prefHeight="25.0" prefWidth="279.0" promptText="Kullanıcı adı belirle..." />
                 <Button fx:id="connectButton" layoutX="1002.0" layoutY="77.0" mnemonicParsing="false" onAction="#connectionButton" text="Bağlan !" />
-                <Label layoutX="634.0" layoutY="172.0" text="Status Section:">
+                <Label layoutX="626.0" layoutY="153.0" text="Status Section:">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
@@ -75,19 +75,25 @@
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Label>
-                <ImageView fx:id="textEncryptionImageView" fitHeight="69.0" fitWidth="99.0" layoutX="998.0" layoutY="260.0" pickOnBounds="true" preserveRatio="true" />
+                <ImageView fx:id="textEncryptionImageView" fitHeight="76.0" fitWidth="99.0" layoutX="973.0" layoutY="261.0" pickOnBounds="true" preserveRatio="true" />
                 <ImageView fx:id="fileEncryptionImageView" fitHeight="76.0" fitWidth="99.0" layoutX="758.0" layoutY="257.0" pickOnBounds="true" preserveRatio="true" />
                 <Button fx:id="clearButtonFile" layoutX="878.0" layoutY="371.0" mnemonicParsing="false" onAction="#clearEncodedFile" text="Clear Encoded File !" />
                 <Button layoutX="811.0" layoutY="415.0" mnemonicParsing="false" onAction="#clearAllAction" text="Tümünü Temizle !" />
                 <Button layoutX="739.0" layoutY="44.0" mnemonicParsing="false" onAction="#startServer" text="Sunucuyu Başlat !" />
                 <Button layoutX="864.0" layoutY="44.0" mnemonicParsing="false" onAction="#stopServer" text="Sunucuyu Durdur !" />
-                <Label layoutX="784.0" layoutY="201.0" text="Server:">
+                <Label layoutX="656.0" layoutY="201.0" text="Server:">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Label>
-                <ImageView fx:id="serverStatusImageView" fitHeight="76.0" fitWidth="99.0" layoutX="846.0" layoutY="172.0" pickOnBounds="true" preserveRatio="true" />
+                <ImageView fx:id="serverStatusImageView" fitHeight="76.0" fitWidth="99.0" layoutX="758.0" layoutY="172.0" pickOnBounds="true" preserveRatio="true" />
                 <Label layoutX="629.0" layoutY="349.0" text="Clear Section:">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+                <ImageView fx:id="connectionStatusImageView" fitHeight="76.0" fitWidth="99.0" layoutX="973.0" layoutY="172.0" pickOnBounds="true" preserveRatio="true" />
+                <Label layoutX="894.0" layoutY="201.0" text="Connection:">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>

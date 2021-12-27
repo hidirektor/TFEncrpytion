@@ -19,7 +19,7 @@ public class Server {
             while(!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
                 ClientHandler clientHandler = new ClientHandler(socket);
-                System.out.println(clientHandler.clientUsername +" has connected!");
+                System.out.println("SERVER:: " + clientHandler.clientUsername +" sunucuya katıldı!");
 
                 Thread thread = new Thread(clientHandler);
                 thread.start();

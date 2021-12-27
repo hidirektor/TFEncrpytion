@@ -19,7 +19,7 @@ public class ClientHandler implements Runnable {
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.clientUsername = bufferedReader.readLine();
             clientHandlers.add(this);
-            broadcastMessage("SERVER: " + clientUsername + " has entered the network!");
+            broadcastMessage("SERVER: " + clientUsername + " sunucuya katıldı!");
         } catch(IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
@@ -42,11 +42,11 @@ public class ClientHandler implements Runnable {
     public void broadcastMessage(String messageToSend) {
         for(ClientHandler clientHandler : clientHandlers) {
             try {
-                //if(!clientHandler.clientUsername.equals(clientUsername)) {
+                if(!clientHandler.clientUsername.equals(clientUsername)) {
                     clientHandler.bufferedWriter.write(messageToSend);
                     clientHandler.bufferedWriter.newLine();
                     clientHandler.bufferedWriter.flush();
-                //}
+                }
             } catch(IOException e) {
                 closeEverything(socket, bufferedReader, bufferedWriter);
             }
@@ -55,7 +55,7 @@ public class ClientHandler implements Runnable {
 
     public void removeClientHandler() {
         clientHandlers.remove(this);
-        broadcastMessage("SERVER: " + clientUsername + " has left the network !");
+        broadcastMessage("SERVER: " + clientUsername + " sunucudan ayrıldı !");
     }
 
     public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {

@@ -6,6 +6,7 @@ import me.t3sl4.textfileencoder.Utils.AES;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class Client {
 
@@ -13,6 +14,7 @@ public class Client {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String username;
+    private static int CHUNKSIZE = 16384;
     Alert alert = new Alert(Alert.AlertType.ERROR);
 
     public Client(Socket socket, String username) {
@@ -26,24 +28,78 @@ public class Client {
         }
     }
 
-    public void sendMessage() {
+    public void sendUserName(String userName) {
         try {
+            bufferedWriter.write(userName);
+            bufferedWriter.newLine();
             bufferedWriter.flush();
-            String messageToSend = null;
-            while(socket.isConnected()) {
-                if(messageToSend != null) {
-                    System.out.println("Mesaj: " + messageToSend);
-                    bufferedWriter.write(messageToSend);
-                    bufferedWriter.newLine();
-                }
-                bufferedWriter.flush();
-            }
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    /*private void recieveFile() throws IOException {
+        InputStream in = socket.getInputStream();
+        PrintWriter out = new PrintWriter(socket.getOutputStream());
+
+        out.write("all");
+        out.flush();
+
+        File file = new File(this.outputFilePath);
+        FileOutputStream fileOut = new FileOutputStream(file);
+
+        int count;
+        byte[] buffer = new byte[8192];
+        while ((count = in.read(buffer)) > 0) {
+            fileOut.write(buffer, 0, count);
+            fileOut.flush();
+        }
+        fileOut.close();
+
+    }
+
+    private void sendFile(Socket client) throws IOException {
+        Scanner in       = new Scanner(client.getInputStream());
+        PrintWriter  printOut = new PrintWriter(client.getOutputStream(), true);
+        OutputStream out      = client.getOutputStream();
+
+        File file = new File(this.filePath);
+        if (!file.exists()) {
+            System.out.println("The file doesn't exist!");
+            System.exit(-1);
+        }
+
+        long chunks = file.length() / CHUNKSIZE;
+        long lastChunkSize = file.length() % CHUNKSIZE;
+        if ( lastChunkSize != 0) {
+            chunks++;
+        }
+        System.out.println("Serving " + this.filePath + "(" + file.length() + " Bytes / " + chunks +  " Chunks)");
+
+        InputStream fileInput = null;
+        try {
+            fileInput = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            System.out.println("The file doesn't exist!");
+            System.exit(-1);
+        }
+
+        byte[] buffer = new byte[CHUNKSIZE];
+
+        int readData;
+
+        System.out.println("Sending file...");
+        int sendcounter = 0;
+        while ( (readData = fileInput.read(buffer)) != -1 ) {
+            out.write(buffer, 0, readData);
+            System.out.print(".");
+            sendcounter++;
+        }
+
+        System.out.println("\nfinished (" + sendcounter +")!");
+    }*/
 
     public void sendCustomMessage(String message, String key, int type) {
         try {
@@ -55,7 +111,6 @@ public class Client {
                 } else if(type == 2) {
                     messageToSend = key + "hidspn" + message;
                 }
-                System.out.println("Mesaj: " + messageToSend);
                 bufferedWriter.write(messageToSend);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
@@ -77,23 +132,16 @@ public class Client {
                 while(socket.isConnected()) {
                     try {
                         msgFromGroupChat = bufferedReader.readLine();
-                        if(msgFromGroupChat.contains("hidsha256")) {
-                            TextEncodeController.originPlainTextArea.setText(String.valueOf(msgFromGroupChat.split("hidsha256")));
-                        } else if(msgFromGroupChat.contains("hidspn")) {
-                            String[] newMessage = msgFromGroupChat.split("hidspn");
-                            String oldKey = newMessage[0];
-                            System.out.println("OldKey: " + oldKey);
-                            String spnCipherText = newMessage[1];
-                            System.out.println("spnCipherKey: " + spnCipherText);
-                            if(oldKey == TextEncodeController.key) {
+                        if(msgFromGroupChat != null) {
+                            if(msgFromGroupChat.contains("hidsha256")) {
+                                TextEncodeController.originCipherTextArea.setText(Arrays.toString(msgFromGroupChat.split("hidsha256")));
+                                break;
+                            } else if(msgFromGroupChat.contains("hidspn")) {
+                                String[] newMessage = msgFromGroupChat.split("hidspn");
+                                String spnCipherText = newMessage[1];
                                 TextEncodeController.originCipherTextArea.setText(spnCipherText);
                                 TextEncodeController.originPlainTextArea.setText(AES.decrypt(spnCipherText, TextEncodeController.key));
-                                System.out.println("Çözülmüş Hali: " + AES.decrypt(spnCipherText, TextEncodeController.key));
-                            } else {
-                                alert.setTitle("HATA!");
-                                alert.setHeaderText("Anahtar Hatası.");
-                                alert.setContentText("Şifreyi gönderenle aynı anahtara sahip değilsin.");
-                                alert.showAndWait();
+                                break;
                             }
                         }
                         System.out.println(msgFromGroupChat);

@@ -70,6 +70,9 @@ public class TextEncodeController implements Initializable {
     @FXML
     private ImageView serverStatusImageView;
 
+    @FXML
+    private ImageView connectionStatusImageView;
+
     public static TextArea originPlainTextArea;
     public static TextArea originCipherTextArea;
 
@@ -82,14 +85,15 @@ public class TextEncodeController implements Initializable {
     public static String spnCipherText = null;
     public static File selectedFile = null;
     public static String newPath = null;
-    public static boolean connectionStatus = false;
+    public boolean connectionStatus = false;
+    public String userName = null;
 
     private boolean fileEncodeStat = false;
     private boolean textEncodeStat = false;
     public static boolean sha256EncodeStat = false;
     public static boolean spnEncodeStat = false;
 
-    private Thread connectionThread, startServerThread, stopServerThread;
+    private Thread startServerThread, stopServerThread;
     private Client client;
     private Server server;
 
@@ -104,8 +108,10 @@ public class TextEncodeController implements Initializable {
 
         textEncryptionImageView.setImage(SecTick);
         fileEncryptionImageView.setImage(SecTick);
+        connectionStatusImageView.setImage(SecTick);
 
         checkServerStatus();
+        checkConnectionStatus();
     }
 
     public void showKey() {
@@ -277,10 +283,10 @@ public class TextEncodeController implements Initializable {
         }
     }
 
-    public void connectionButton() {
+    public void connectionButton() throws IOException {
         if(!isPortAvailable(1334)) {
             if(!nicknameField.getText().trim().isEmpty()) {
-                String userName = nicknameField.getText();
+                userName = nicknameField.getText();
                 connectServer(userName, 1);
                 connectionStatus = true;
             } else {
@@ -304,9 +310,9 @@ public class TextEncodeController implements Initializable {
                 protected Void call() throws Exception {
                     if(textEncodeStat) {
                         if(sha256CipherText != null) {
-                            //client.sendCustomMessage(sha256CipherText, "randomkeyrandomkey", 1);
+                            client.sendCustomMessage(sha256CipherText, key, 1);
                         } else if(spnCipherText != null) {
-                            //client.sendCustomMessage(spnCipherText, key, 2);
+                            client.sendCustomMessage(spnCipherText, key, 2);
                         }
                     } else if(fileEncodeStat) {
                         //client.sendFile(selectedFilePath.getText());
@@ -414,7 +420,7 @@ public class TextEncodeController implements Initializable {
                     };
                     Thread startFunctionCallThread = new Thread(startFunctionCallTask);
                     startFunctionCallThread.start();
-                    System.out.println("SUNUCU BASLATILDI");
+                    System.out.println("SUNUCU BASLATILDI !!");
                     return null;
                 }
             };
@@ -428,7 +434,6 @@ public class TextEncodeController implements Initializable {
             } else if(portStatus == true) {
                 startServerThread.start();
                 serverStatusImageView.setImage(FirstTick);
-                connectionStatus = true;
             }
         } else if(serverStatus == 0) {
             Task<Void> stopServerTask = new Task<Void>() {
@@ -443,7 +448,6 @@ public class TextEncodeController implements Initializable {
             if(portStatus == false) {
                 stopServerThread.start();
                 serverStatusImageView.setImage(SecTick);
-                connectionStatus = false;
             } else if(portStatus == true) {
                 alert.setTitle("HATA!");
                 alert.setHeaderText("Server Hatası.");
@@ -468,29 +472,28 @@ public class TextEncodeController implements Initializable {
         serverStatusExec.scheduleAtFixedRate(serverStatusImageRunnable , 0, 1, TimeUnit.SECONDS);
     }
 
-    private void connectServer(String userName, int type) {
-        Task<Void> connectionServerTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                Socket socket = new Socket("localhost", 1334);
-                Task<Void> connectionConverterTask = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        client = new Client(socket, userName);
-                        client.listenForMessage();
-                        //client.sendMessage();
-                        return null;
-                    }
-                };
-                Thread connectionConverterThread = new Thread(connectionConverterTask);
-                connectionConverterThread.start();
-                System.out.println(userName + " olarak sunucuya bağlandın.");
-                return null;
+    private void checkConnectionStatus() {
+        Runnable serverStatusImageRunnable = new Runnable() {
+            public void run() {
+                if(connectionStatus) {
+                    connectionStatusImageView.setImage(FirstTick);
+                } else {
+                    connectionStatusImageView.setImage(SecTick);
+                }
             }
         };
-        connectionThread = new Thread(connectionServerTask);
+
+        ScheduledExecutorService serverStatusExec = Executors.newScheduledThreadPool(1);
+        serverStatusExec.scheduleAtFixedRate(serverStatusImageRunnable , 0, 1, TimeUnit.SECONDS);
+    }
+
+    private void connectServer(String userName, int type) throws IOException {
         if(type == 1) {
-            connectionThread.start();
+            Socket socket = new Socket("localhost", 1334);
+            client = new Client(socket, userName);
+            client.listenForMessage();
+            client.sendUserName(userName);
+            System.out.println(userName + " olarak sunucuya bağlandın.");
         }
     }
 }
