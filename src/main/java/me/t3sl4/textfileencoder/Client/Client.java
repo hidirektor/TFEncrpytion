@@ -1,8 +1,9 @@
 package me.t3sl4.textfileencoder.Client;
 
+import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import me.t3sl4.textfileencoder.Controllers.TextEncodeController;
-import me.t3sl4.textfileencoder.Utils.AES;
+import me.t3sl4.textfileencoder.Utils.SPN;
 
 import java.io.*;
 import java.net.Socket;
@@ -10,12 +11,15 @@ import java.util.Arrays;
 
 public class Client {
 
-    private Socket socket;
+    private static Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String username;
-    private static int CHUNKSIZE = 16384;
+    private static final int CHUNK_SIZE = 1024;
+    private static final File _downloadDir = new File(System.getProperty("user.home") + "/Desktop/");
     Alert alert = new Alert(Alert.AlertType.ERROR);
+
+    public static Thread listenForMessageThread = null;
 
     public Client(Socket socket, String username) {
         try {
@@ -40,81 +44,11 @@ public class Client {
         }
     }
 
-    /*private void recieveFile() throws IOException {
-        InputStream in = socket.getInputStream();
-        PrintWriter out = new PrintWriter(socket.getOutputStream());
-
-        out.write("all");
-        out.flush();
-
-        File file = new File(this.outputFilePath);
-        FileOutputStream fileOut = new FileOutputStream(file);
-
-        int count;
-        byte[] buffer = new byte[8192];
-        while ((count = in.read(buffer)) > 0) {
-            fileOut.write(buffer, 0, count);
-            fileOut.flush();
-        }
-        fileOut.close();
-
-    }
-
-    private void sendFile(Socket client) throws IOException {
-        Scanner in       = new Scanner(client.getInputStream());
-        PrintWriter  printOut = new PrintWriter(client.getOutputStream(), true);
-        OutputStream out      = client.getOutputStream();
-
-        File file = new File(this.filePath);
-        if (!file.exists()) {
-            System.out.println("The file doesn't exist!");
-            System.exit(-1);
-        }
-
-        long chunks = file.length() / CHUNKSIZE;
-        long lastChunkSize = file.length() % CHUNKSIZE;
-        if ( lastChunkSize != 0) {
-            chunks++;
-        }
-        System.out.println("Serving " + this.filePath + "(" + file.length() + " Bytes / " + chunks +  " Chunks)");
-
-        InputStream fileInput = null;
+    public void sendFileName(String filePath) {
         try {
-            fileInput = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            System.out.println("The file doesn't exist!");
-            System.exit(-1);
-        }
-
-        byte[] buffer = new byte[CHUNKSIZE];
-
-        int readData;
-
-        System.out.println("Sending file...");
-        int sendcounter = 0;
-        while ( (readData = fileInput.read(buffer)) != -1 ) {
-            out.write(buffer, 0, readData);
-            System.out.print(".");
-            sendcounter++;
-        }
-
-        System.out.println("\nfinished (" + sendcounter +")!");
-    }*/
-
-    public void sendCustomMessage(String message, String key, int type) {
-        try {
+            bufferedWriter.write(filePath);
+            bufferedWriter.newLine();
             bufferedWriter.flush();
-            String messageToSend = null;
-            while(socket.isConnected()) {
-                if(type == 1) {
-                    messageToSend = "hidsha256" + message;
-                } else if(type == 2) {
-                    messageToSend = key + "hidspn" + message;
-                }
-                bufferedWriter.write(messageToSend);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-            }
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
         } catch (Exception e) {
@@ -122,35 +56,171 @@ public class Client {
         }
     }
 
+    public static void sendFile(String path) {
+        if (path == null) {
+            throw new NullPointerException("Path is null");
+        }
+        File file = new File(path);
+        try {
+            System.out.println("Connected to server at " + socket.getInetAddress());
 
-    public void listenForMessage() {
+            PrintStream out = new PrintStream(socket.getOutputStream(), true);
+
+            out.println(file.getName());
+            out.println(file.length());
+
+            System.out.println("Sending " + file.getName() + " (" + file.length() + " bytes) to server...");
+            writeFile(file, socket.getOutputStream());
+            System.out.println("Finished sending " + file.getName() + " to server");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void listen4File() {
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            System.out.println("TEST2");
+            DataInputStream dis = new DataInputStream(socket.getInputStream());
+            String name = dis.readUTF();
+            System.out.println("TEST3");
+            File file = new File(_downloadDir, name);
+            long fileSize = dis.readLong();
+            System.out.println("Saving " + file + " from user... ("
+                    + fileSize + " bytes)");
+
+            System.out.println("Saving " + file + " from user... (" + fileSize + " bytes)");
+            saveFile(file, socket.getInputStream());
+            System.out.println("Finished downloading " + file + " from user.");
+            if (file.length() != fileSize) {
+                System.err.println("Error: file incomplete");
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void saveFile(File file, InputStream inStream) {
+        FileOutputStream fileOut = null;
+        try {
+            fileOut = new FileOutputStream(file);
+
+            byte[] buffer = new byte[CHUNK_SIZE];
+            int bytesRead;
+            int pos = 0;
+            while ((bytesRead = inStream.read(buffer, 0, CHUNK_SIZE)) >= 0) {
+                pos += bytesRead;
+                System.out.println(pos + " bytes (" + bytesRead + " bytes read)");
+                fileOut.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fileOut != null) {
+                try {
+                    fileOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println("Finished, filesize = " + file.length());
+    }
+
+    private static void writeFile(File file, OutputStream outStream) {
+        FileInputStream reader = null;
+        try {
+            reader = new FileInputStream(file);
+            byte[] buffer = new byte[CHUNK_SIZE];
+            int pos = 0;
+            int bytesRead;
+            while ((bytesRead = reader.read(buffer, 0, CHUNK_SIZE)) >= 0) {
+                outStream.write(buffer, 0, bytesRead);
+                outStream.flush();
+                pos += bytesRead;
+                System.out.println(pos + " bytes (" + bytesRead + " bytes read)");
+            }
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Error while reading file");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Error while writing " + file.toString() + " to output stream");
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void sendCustomMessage(String message, String key, int type) throws IOException {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String msgFromGroupChat;
-
-                while(socket.isConnected()) {
-                    try {
-                        msgFromGroupChat = bufferedReader.readLine();
-                        if(msgFromGroupChat != null) {
-                            if(msgFromGroupChat.contains("hidsha256")) {
-                                TextEncodeController.originCipherTextArea.setText(Arrays.toString(msgFromGroupChat.split("hidsha256")));
-                                break;
-                            } else if(msgFromGroupChat.contains("hidspn")) {
-                                String[] newMessage = msgFromGroupChat.split("hidspn");
-                                String spnCipherText = newMessage[1];
-                                TextEncodeController.originCipherTextArea.setText(spnCipherText);
-                                TextEncodeController.originPlainTextArea.setText(AES.decrypt(spnCipherText, TextEncodeController.key));
-                                break;
-                            }
+                try {
+                    bufferedWriter.flush();
+                    String messageToSend = null;
+                    while(socket.isConnected()) {
+                        if(type == 1) {
+                            messageToSend = "hidsha256" + message;
+                        } else if(type == 2) {
+                            messageToSend = key + "hidspn" + message;
                         }
-                        System.out.println(msgFromGroupChat);
-                    } catch (Exception e) {
-                        closeEverything(socket, bufferedReader, bufferedWriter);
+                        bufferedWriter.write(messageToSend);
+                        System.out.println("Mesaj Gönderildi !");
+                        bufferedWriter.newLine();
+                        bufferedWriter.flush();
                     }
+                } catch (IOException e) {
+                    closeEverything(socket, bufferedReader, bufferedWriter);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }).start();
+    }
+
+    public void listenForMessage() {
+        Task<Void> listenForMessageTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                String msgFromGroupChat;
+                String messageListener = "";
+                if(!messageListener.equals("stop")) {
+                    System.out.println("msglısten: " + messageListener);
+                    //if(messageListener.equalsIgnoreCase("start")) {
+                        try {
+                            msgFromGroupChat = bufferedReader.readLine();
+                            while(msgFromGroupChat.contains("hidsha256") || msgFromGroupChat.contains("hidspn")) {
+                                if(msgFromGroupChat != null) {
+                                    if(msgFromGroupChat.contains("hidsha256")) {
+                                        TextEncodeController.originCipherTextArea.setText(Arrays.toString(msgFromGroupChat.split("hidsha256")));
+                                    } else if(msgFromGroupChat.contains("hidspn")) {
+                                        String[] newMessage = msgFromGroupChat.split("hidspn");
+                                        String spnCipherText = newMessage[1];
+                                        TextEncodeController.originCipherTextArea.setText(spnCipherText);
+                                        TextEncodeController.originPlainTextArea.setText(SPN.decryptWithSpn(spnCipherText, TextEncodeController.key));
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            closeEverything(socket, bufferedReader, bufferedWriter);
+                        }
+                    //}
+                }
+                return null;
+            }
+        };
+        listenForMessageThread = new Thread(listenForMessageTask);
+        listenForMessageThread.start();
+    }
+
+    public Socket getClientSocket() {
+        return this.socket;
     }
 
     public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {

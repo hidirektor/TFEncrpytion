@@ -26,7 +26,7 @@
                 <TextArea fx:id="textInput" layoutX="31.0" layoutY="57.0" prefHeight="40.0" prefWidth="279.0" promptText="Lütfen şifrelemek istediğiniz metni girin..." />
                 <TextArea fx:id="plainTextArea" layoutX="14.0" layoutY="146.0" prefHeight="200.0" prefWidth="297.0" promptText="Metnin normal hali..." />
                 <TextArea fx:id="cipherTextArea" layoutX="324.0" layoutY="146.0" prefHeight="200.0" prefWidth="297.0" promptText="Metnin şifrelenmiş hali..." />
-                <Button fx:id="sendButton" layoutX="825.0" layoutY="128.0" mnemonicParsing="false" onAction="#sendButtonAction" text="Gönder !" />
+                <Button fx:id="sendButton" layoutX="758.0" layoutY="120.0" mnemonicParsing="false" onAction="#sendButtonAction" text="Gönder !" />
                 <Button fx:id="encrypButton" layoutX="126.0" layoutY="108.0" mnemonicParsing="false" onAction="#encryptPlainText" text="Şifrele !" />
                 <TextArea fx:id="keyTextArea" layoutX="324.0" layoutY="57.0" prefHeight="40.0" prefWidth="279.0" promptText="Lütfen anahtar girin..." />
                 <Button fx:id="fileEncodingButton" layoutX="23.0" layoutY="406.0" mnemonicParsing="false" onAction="#fileEncodingButton" text="Choose File" />
@@ -51,7 +51,6 @@
                 <Button fx:id="setKey" layoutX="425.0" layoutY="108.0" mnemonicParsing="false" onAction="#settingKey" text="Anahtar Belirle" />
                 <TextField fx:id="selectedFilePath" editable="false" layoutX="106.0" layoutY="406.0" prefHeight="25.0" prefWidth="381.0" />
                 <TextField fx:id="selectedKeyField" editable="false" layoutX="476.0" layoutY="10.0" promptText="Belirlenen Anahtar" />
-                <TextField fx:id="fileExtension" editable="false" layoutX="425.0" layoutY="375.0" visible="false" />
                 <Button fx:id="clearButton" layoutX="730.0" layoutY="371.0" mnemonicParsing="false" onAction="#clearEncodedText" text="Clear Encoded Text !" />
                 <Label layoutX="634.0" layoutY="14.0" text="Connection Section">
                     <font>
@@ -98,6 +97,7 @@
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Label>
+                <Button layoutX="876.0" layoutY="120.0" mnemonicParsing="false" onAction="#takeFile" text="Dosyayı İndir !" />
             </children>
         </AnchorPane>
     </children>

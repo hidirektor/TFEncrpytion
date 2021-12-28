@@ -12,6 +12,9 @@ public class ClientHandler implements Runnable {
     private BufferedWriter bufferedWriter;
     public String clientUsername;
 
+    private static final int CHUNK_SIZE = 1024;
+    private static final File _downloadDir = new File(System.getProperty("user.home") + "/Desktop/");
+
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;
@@ -27,6 +30,12 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
+        if (!_downloadDir.exists()) {
+            if (!_downloadDir.mkdirs()) {
+                System.err.println("Error: Could not create download directory");
+            }
+        }
+
         String messageFromClient;
         while(socket.isConnected()) {
             try {

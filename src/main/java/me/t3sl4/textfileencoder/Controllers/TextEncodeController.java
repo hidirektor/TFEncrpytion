@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -25,10 +27,10 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import me.t3sl4.textfileencoder.Client.Client;
 import me.t3sl4.textfileencoder.Server.Server;
-import me.t3sl4.textfileencoder.Utils.AES;
 import me.t3sl4.textfileencoder.Utils.FileEncryption;
 import me.t3sl4.textfileencoder.Utils.FileZIP;
 import me.t3sl4.textfileencoder.Utils.SHA256;
+import me.t3sl4.textfileencoder.Utils.SPN;
 
 public class TextEncodeController implements Initializable {
     @FXML
@@ -59,7 +61,10 @@ public class TextEncodeController implements Initializable {
     private CheckBox spnCheckBox;
 
     @FXML
-    private TextField fileExtension;
+    private Button sendButton;
+
+    @FXML
+    private static TextField fileExtension;
 
     @FXML
     private ImageView textEncryptionImageView;
@@ -76,15 +81,17 @@ public class TextEncodeController implements Initializable {
     public static TextArea originPlainTextArea;
     public static TextArea originCipherTextArea;
 
-    Alert alert = new Alert(Alert.AlertType.ERROR);
+    static Alert alert = new Alert(Alert.AlertType.ERROR);
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     public static String key = null;
     public static String sha256CipherText = null;
     public static String sha256PlainText = null;
     public static String spnCipherText = null;
+
     public static File selectedFile = null;
-    public static String newPath = null;
+    public static File zippedFile = null;
+
     public boolean connectionStatus = false;
     public String userName = null;
 
@@ -96,6 +103,8 @@ public class TextEncodeController implements Initializable {
     private Thread startServerThread, stopServerThread;
     private Client client;
     private Server server;
+    private static DataInputStream dataInputForCmd;
+    private static DataOutputStream dataOutputForCmd;
 
     private Image FirstTick = new Image(getClass().getResourceAsStream("/images/FirstTick.png"));
     private Image SecTick = new Image(getClass().getResourceAsStream("/images/SecTick.png"));
@@ -173,8 +182,8 @@ public class TextEncodeController implements Initializable {
                         sha256EncodeStat = true;
                     }
                 } else if(spnCheckBox.isSelected()) {
-                    spnCipherText = AESencrypt(textInput.getText(), key);
-                    plainTextArea.setText(AESDecrypt(spnCipherText, key));
+                    spnCipherText = SPNencrypt(textInput.getText(), key);
+                    plainTextArea.setText(SPNDecrypt(spnCipherText, key));
                     cipherTextArea.setText(spnCipherText);
                     textEncryptionImageView.setImage(FirstTick);
                     textEncodeStat = true;
@@ -266,7 +275,7 @@ public class TextEncodeController implements Initializable {
     public void encodeSelectedFile() {
         if(selectedFile != null && key != null) {
             try {
-                fileExtension.setText(findExtension(selectedFile.getAbsolutePath()));
+                //fileExtension.setText(findExtension(selectedFile.getAbsolutePath()));
                 FileEncryption.encryptFile(selectedFile.getAbsolutePath(), key);
                 fileEncryptionImageView.setImage(FirstTick);
                 fileEncodeStat = true;
@@ -303,27 +312,21 @@ public class TextEncodeController implements Initializable {
         }
     }
 
-    public void sendButtonAction() {
+    public void sendButtonAction() throws IOException {
         if(connectionStatus) {
-            Task<Void> sendTask = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    if(textEncodeStat) {
-                        if(sha256CipherText != null) {
-                            client.sendCustomMessage(sha256CipherText, key, 1);
-                        } else if(spnCipherText != null) {
-                            client.sendCustomMessage(spnCipherText, key, 2);
-                        }
-                    } else if(fileEncodeStat) {
-                        //client.sendFile(selectedFilePath.getText());
-                        clearEncodedFile();
-                    }
-                    System.out.println("Mesaj gönderildi !");
-                    return null;
+            if(textEncodeStat) {
+                if(sha256CipherText != null) {
+                    client.sendCustomMessage(sha256CipherText, key, 1);
+                } else if(spnCipherText != null) {
+                    client.sendCustomMessage(spnCipherText, key, 2);
                 }
-            };
-            Thread sendThread = new Thread(sendTask);
-            sendThread.start();
+            } else if(fileEncodeStat) {
+                File encryptedAndCompressedFile = new File(selectedFile.getAbsoluteFile() + ".encrypted.zip");
+                System.out.println(encryptedAndCompressedFile.getAbsolutePath());
+                client.sendFileName(encryptedAndCompressedFile.getAbsolutePath());
+                client.sendFile(encryptedAndCompressedFile.getAbsolutePath());
+                clearEncodedFile();
+            }
         } else {
             alert.setTitle("HATA!");
             alert.setHeaderText("Bağlantı Hatası.");
@@ -332,8 +335,12 @@ public class TextEncodeController implements Initializable {
         }
     }
 
+    public void takeFile() {
+        client.listen4File();
+    }
+
     //Gerekli fonksiyonlar:
-    public void decodeSelectedFile(File selectedDecFile) {
+    public static File decodeSelectedFile(File selectedDecFile) {
         if(selectedDecFile != null && key != null && fileExtension.getText() != null) {
             try {
                 if(selectedDecFile.getName().contains("encrypted")) {
@@ -342,7 +349,7 @@ public class TextEncodeController implements Initializable {
                     FileZIP.unzipFolder(source, target);
                     File delete = new File(selectedDecFile.getAbsolutePath());
                     delete.delete();
-                    FileEncryption.decryptFile(newPath, key, fileExtension.getText());
+                    return FileEncryption.decryptFile(selectedDecFile.getAbsolutePath(), key, fileExtension.getText());
                 } else {
                     alert.setTitle("HATA!");
                     alert.setHeaderText("Şifreleme Algoritması Hatası.");
@@ -360,6 +367,7 @@ public class TextEncodeController implements Initializable {
             alert.setContentText("Dosya şifrelemek için önce bir anahtar belirlemeli ve şifrelenecek dosyayı seçmelisin.");
             alert.showAndWait();
         }
+        return null;
     }
 
     private void clrChoices() {
@@ -373,17 +381,17 @@ public class TextEncodeController implements Initializable {
         spnEncodeStat = false;
     }
 
-    private String AESencrypt(String plainText, String key) throws Exception {
-        String encryptedTextBase64 = AES.encrypt(plainText.getBytes(UTF_8), key);
+    private String SPNencrypt(String plainText, String key) throws Exception {
+        String encryptedTextBase64 = SPN.encryptWithSpn(plainText, key);
         return encryptedTextBase64;
     }
 
-    private String AESDecrypt(String cipherText, String key) throws Exception {
-        String decryptedTextBase64 = AES.decrypt(cipherText, key);
+    private String SPNDecrypt(String cipherText, String key) throws Exception {
+        String decryptedTextBase64 = SPN.decryptWithSpn(cipherText, key);
         return decryptedTextBase64;
     }
 
-    private String findExtension(String fileName) {
+    public static String findExtension(String fileName) {
         String extension = "";
 
         int index = fileName.lastIndexOf('.');
@@ -491,8 +499,13 @@ public class TextEncodeController implements Initializable {
         if(type == 1) {
             Socket socket = new Socket("localhost", 1334);
             client = new Client(socket, userName);
-            client.listenForMessage();
-            client.sendUserName(userName);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    client.listenForMessage();
+                    client.sendUserName(userName);
+                }
+            }).start();
             System.out.println(userName + " olarak sunucuya bağlandın.");
         }
     }

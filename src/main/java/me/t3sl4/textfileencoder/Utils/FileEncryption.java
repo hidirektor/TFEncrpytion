@@ -1,5 +1,7 @@
 package me.t3sl4.textfileencoder.Utils;
 
+import me.t3sl4.textfileencoder.Controllers.TextEncodeController;
+
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
@@ -70,7 +72,50 @@ public class FileEncryption {
         FileZIP.compressFile(outFile.getAbsolutePath());
     }
 
-    public static void decryptFile(String fileName, String pass, String fileFormat)
+    public static boolean testEncryptFile(String fileName, String pass)
+            throws IOException, GeneralSecurityException{
+        try {
+            byte[] decData;
+            byte[] encData;
+            File inFile = new File(fileName);
+
+            Cipher cipher = FileEncryption.makeCipher(pass, true);
+
+            FileInputStream inStream = new FileInputStream(inFile);
+
+            int blockSize = 8;
+
+            int paddedCount = blockSize - ((int)inFile.length()  % blockSize );
+
+            int padded = (int)inFile.length() + paddedCount;
+
+            decData = new byte[padded];
+
+
+            inStream.read(decData);
+
+            inStream.close();
+
+            for( int i = (int)inFile.length(); i < padded; ++i ) {
+                decData[i] = (byte)paddedCount;
+            }
+
+            encData = cipher.doFinal(decData);
+
+
+            File outFile = new File(fileName + ".encrypted");
+            FileOutputStream outStream = new FileOutputStream(outFile);
+            outStream.write(encData);
+            outStream.close();
+            outFile.delete();
+            return true;
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static File decryptFile(String fileName, String pass, String fileFormat)
             throws GeneralSecurityException, IOException{
         byte[] encData;
         byte[] decData;
@@ -95,5 +140,6 @@ public class FileEncryption {
         target.write(decData);
         inFile.delete();
         target.close();
+        return new File(fileName);
     }
 }
