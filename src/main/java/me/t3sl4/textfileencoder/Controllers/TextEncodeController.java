@@ -1,5 +1,6 @@
 package me.t3sl4.textfileencoder.Controllers;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -75,6 +76,9 @@ public class TextEncodeController implements Initializable {
 
     @FXML
     private ImageView connectionStatusImageView;
+
+    @FXML
+    private Label secretKey;
 
     public static TextArea originPlainTextArea;
     public static TextArea originCipherTextArea;
@@ -178,6 +182,7 @@ public class TextEncodeController implements Initializable {
                         textEncryptionImageView.setImage(FirstTick);
                         textEncodeStat = true;
                         sha256EncodeStat = true;
+                        textInput.setText(null);
                     }
                 } else if(spnCheckBox.isSelected()) {
                     spnCipherText = SPNencrypt(textInput.getText(), key);
@@ -186,6 +191,7 @@ public class TextEncodeController implements Initializable {
                     textEncryptionImageView.setImage(FirstTick);
                     textEncodeStat = true;
                     spnEncodeStat = true;
+                    textInput.setText(null);
                 }
             } else {
                 alert.setTitle("HATA!");
@@ -292,16 +298,8 @@ public class TextEncodeController implements Initializable {
 
     public void connectionButton() throws IOException {
         if(!isPortAvailable(1334)) {
-            if(!nicknameField.getText().trim().isEmpty()) {
-                userName = nicknameField.getText();
-                connectServer(userName, 1);
-                connectionStatus = true;
-            } else {
-                alert.setTitle("HATA!");
-                alert.setHeaderText("Kullanıcı Adı Hatası.");
-                alert.setContentText("Sunucuya bağlanmak için önce bir kullanıcı adı belirlemelisin.");
-                alert.showAndWait();
-            }
+            connectServer(1);
+            connectionStatus = true;
         } else {
             alert.setTitle("HATA!");
             alert.setHeaderText("Sunucu Hatası.");
@@ -321,7 +319,7 @@ public class TextEncodeController implements Initializable {
                     }
                 } else if(spnCipherText != null) {
                     try {
-                        dout.writeUTF(cipherTextArea.getText());
+                        dout.writeUTF(cipherTextArea.getText() + "hidspn" + key);
                     } catch (Exception e) {
                         System.out.println(e);
                     }
@@ -337,6 +335,29 @@ public class TextEncodeController implements Initializable {
             alert.setTitle("HATA!");
             alert.setHeaderText("Bağlantı Hatası.");
             alert.setContentText("Mesaj || dosya göndermek için önce sunucuya bağlanmalısın.");
+            alert.showAndWait();
+        }
+    }
+
+    public void decryptMessage() throws Exception {
+        if(cipherTextArea.getText() != null) {
+            String cipherTextT = cipherTextArea.getText();
+            if(checkBinary(cipherTextT) == true) {
+                if(key.equals(secretKey.getText())) {
+                    plainTextArea.setText(SPNDecrypt(cipherTextT, key));
+                } else {
+                    alert.setTitle("HATA!");
+                    alert.setHeaderText("Şifre Hatası.");
+                    alert.setContentText("Anahtarın mesajı gönderen kullanıcı ile aynı değil.");
+                    alert.showAndWait();
+                }
+            } else {
+                plainTextArea.setText("Aldığın mesaj bir hash bu yüzden bunu çözemezsin.");
+            }
+        } else {
+            alert.setTitle("HATA!");
+            alert.setHeaderText("Metin Hatası.");
+            alert.setContentText("Herhangi bir mesaj almamışsın.");
             alert.showAndWait();
         }
     }
@@ -501,7 +522,7 @@ public class TextEncodeController implements Initializable {
         serverStatusExec.scheduleAtFixedRate(serverStatusImageRunnable , 0, 1, TimeUnit.SECONDS);
     }
 
-    private void connectServer(String userName, int type) {
+    private void connectServer(int type) {
         if(type == 1) {
             new Thread(new Runnable() {
                 @Override
@@ -509,13 +530,24 @@ public class TextEncodeController implements Initializable {
                     try {
                         socket = new Socket("127.0.0.1", 1334);
                         connectionStatusImageView.setImage(FirstTick);
-                        System.out.println(userName + " olarak sunucuya bağlandın.");
+                        System.out.println("Sunucuyla bağlantı kuruldu.");
                         din = new DataInputStream(socket.getInputStream());
                         dout = new DataOutputStream(socket.getOutputStream());
                         String msgin = "";
                         while (!msgin.equals("exit")) {
                             msgin = din.readUTF();
-                            cipherTextArea.setText(msgin);
+                            if(msgin.split("hidspn") != null) {
+                                cipherTextArea.setText(msgin.split("hidspn")[0]);
+                                String finalMsgin = msgin;
+                                Platform.runLater(new Runnable(){
+                                    @Override
+                                    public void run() {
+                                        secretKey.setText(finalMsgin.split("hidspn")[1]);
+                                    }
+                                });
+                            } else {
+                                cipherTextArea.setText(msgin);
+                            }
                         }
 
                     } catch (Exception e) {
@@ -524,5 +556,12 @@ public class TextEncodeController implements Initializable {
                 }
             }).start();
         }
+    }
+
+    private boolean checkBinary(String cipherText) {
+        if (cipherText.matches("[01]+")) {
+            return true;
+        }
+        return false;
     }
 }
