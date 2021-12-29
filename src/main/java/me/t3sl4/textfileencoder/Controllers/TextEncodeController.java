@@ -5,10 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
@@ -17,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,7 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import me.t3sl4.textfileencoder.Client.Client;
-import me.t3sl4.textfileencoder.Server.Server;
+import me.t3sl4.textfileencoder.Server.Server2;
 import me.t3sl4.textfileencoder.Utils.FileEncryption;
 import me.t3sl4.textfileencoder.Utils.FileZIP;
 import me.t3sl4.textfileencoder.Utils.SHA256;
@@ -101,10 +99,10 @@ public class TextEncodeController implements Initializable {
     public static boolean spnEncodeStat = false;
 
     private Thread startServerThread, stopServerThread;
-    private Client client;
-    private Server server;
-    private static DataInputStream dataInputForCmd;
-    private static DataOutputStream dataOutputForCmd;
+    public static Socket socket;
+    private static DataInputStream din;
+    private static DataOutputStream dout;
+    private Server2 server;
 
     private Image FirstTick = new Image(getClass().getResourceAsStream("/images/FirstTick.png"));
     private Image SecTick = new Image(getClass().getResourceAsStream("/images/SecTick.png"));
@@ -312,19 +310,27 @@ public class TextEncodeController implements Initializable {
         }
     }
 
-    public void sendButtonAction() throws IOException {
+    public void sendButtonAction() throws IOException, InterruptedException {
         if(connectionStatus) {
             if(textEncodeStat) {
                 if(sha256CipherText != null) {
-                    client.sendCustomMessage(sha256CipherText, key, 1);
+                    try {
+                        dout.writeUTF(cipherTextArea.getText());
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
                 } else if(spnCipherText != null) {
-                    client.sendCustomMessage(spnCipherText, key, 2);
+                    try {
+                        dout.writeUTF(cipherTextArea.getText());
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
                 }
             } else if(fileEncodeStat) {
                 File encryptedAndCompressedFile = new File(selectedFile.getAbsoluteFile() + ".encrypted.zip");
                 System.out.println(encryptedAndCompressedFile.getAbsolutePath());
-                client.sendFileName(encryptedAndCompressedFile.getAbsolutePath());
-                client.sendFile(encryptedAndCompressedFile.getAbsolutePath());
+                //client.sendFileName(encryptedAndCompressedFile.getAbsolutePath());
+                //client.sendFile(encryptedAndCompressedFile.getAbsolutePath());
                 clearEncodedFile();
             }
         } else {
@@ -336,7 +342,7 @@ public class TextEncodeController implements Initializable {
     }
 
     public void takeFile() {
-        client.listen4File();
+        //client.listen4File();
     }
 
     //Gerekli fonksiyonlar:
@@ -418,7 +424,7 @@ public class TextEncodeController implements Initializable {
                 @Override
                 protected Void call() throws Exception {
                     ServerSocket serverSocket = new ServerSocket(1334);
-                    server = new Server(serverSocket);
+                    server = new Server2(serverSocket);
                     Task<Void> startFunctionCallTask = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
@@ -483,7 +489,7 @@ public class TextEncodeController implements Initializable {
     private void checkConnectionStatus() {
         Runnable serverStatusImageRunnable = new Runnable() {
             public void run() {
-                if(connectionStatus) {
+                if(socket.isConnected()) {
                     connectionStatusImageView.setImage(FirstTick);
                 } else {
                     connectionStatusImageView.setImage(SecTick);
@@ -495,18 +501,28 @@ public class TextEncodeController implements Initializable {
         serverStatusExec.scheduleAtFixedRate(serverStatusImageRunnable , 0, 1, TimeUnit.SECONDS);
     }
 
-    private void connectServer(String userName, int type) throws IOException {
+    private void connectServer(String userName, int type) {
         if(type == 1) {
-            Socket socket = new Socket("localhost", 1334);
-            client = new Client(socket, userName);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    client.listenForMessage();
-                    client.sendUserName(userName);
+                    try {
+                        socket = new Socket("127.0.0.1", 1334);
+                        connectionStatusImageView.setImage(FirstTick);
+                        System.out.println(userName + " olarak sunucuya bağlandın.");
+                        din = new DataInputStream(socket.getInputStream());
+                        dout = new DataOutputStream(socket.getOutputStream());
+                        String msgin = "";
+                        while (!msgin.equals("exit")) {
+                            msgin = din.readUTF();
+                            cipherTextArea.setText(msgin);
+                        }
+
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
                 }
             }).start();
-            System.out.println(userName + " olarak sunucuya bağlandın.");
         }
     }
 }

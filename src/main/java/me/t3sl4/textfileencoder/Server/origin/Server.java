@@ -1,4 +1,4 @@
-package me.t3sl4.textfileencoder.Server;
+package me.t3sl4.textfileencoder.Server.origin;
 
 import java.io.IOException;
 import java.net.ServerSocket;

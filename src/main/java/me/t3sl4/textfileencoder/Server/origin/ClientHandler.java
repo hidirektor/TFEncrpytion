@@ -1,4 +1,4 @@
-package me.t3sl4.textfileencoder.Server;
+package me.t3sl4.textfileencoder.Server.origin;
 
 import java.io.*;
 import java.net.Socket;
@@ -11,6 +11,8 @@ public class ClientHandler implements Runnable {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     public String clientUsername;
+    public DataInputStream din;
+    public DataOutputStream dout;
 
     private static final int CHUNK_SIZE = 1024;
     private static final File _downloadDir = new File(System.getProperty("user.home") + "/Desktop/");

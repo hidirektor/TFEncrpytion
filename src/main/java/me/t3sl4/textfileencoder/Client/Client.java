@@ -1,7 +1,5 @@
 package me.t3sl4.textfileencoder.Client;
 
-import javafx.concurrent.Task;
-import javafx.scene.control.Alert;
 import me.t3sl4.textfileencoder.Controllers.TextEncodeController;
 import me.t3sl4.textfileencoder.Utils.SPN;
 
@@ -12,14 +10,11 @@ import java.util.Arrays;
 public class Client {
 
     private static Socket socket;
-    private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
+    public BufferedReader bufferedReader;
+    public BufferedWriter bufferedWriter;
     private String username;
     private static final int CHUNK_SIZE = 1024;
     private static final File _downloadDir = new File(System.getProperty("user.home") + "/Desktop/");
-    Alert alert = new Alert(Alert.AlertType.ERROR);
-
-    public static Thread listenForMessageThread = null;
 
     public Client(Socket socket, String username) {
         try {
@@ -170,10 +165,11 @@ public class Client {
                         } else if(type == 2) {
                             messageToSend = key + "hidspn" + message;
                         }
-                        bufferedWriter.write(messageToSend);
                         System.out.println("Mesaj Gönderildi !");
+                        bufferedWriter.write(messageToSend);
                         bufferedWriter.newLine();
                         bufferedWriter.flush();
+
                     }
                 } catch (IOException e) {
                     closeEverything(socket, bufferedReader, bufferedWriter);
@@ -185,38 +181,32 @@ public class Client {
     }
 
     public void listenForMessage() {
-        Task<Void> listenForMessageTask = new Task<Void>() {
+        new Thread(new Runnable() {
             @Override
-            protected Void call() throws Exception {
+            public void run() {
                 String msgFromGroupChat;
-                String messageListener = "";
-                if(!messageListener.equals("stop")) {
-                    System.out.println("msglısten: " + messageListener);
-                    //if(messageListener.equalsIgnoreCase("start")) {
-                        try {
-                            msgFromGroupChat = bufferedReader.readLine();
-                            while(msgFromGroupChat.contains("hidsha256") || msgFromGroupChat.contains("hidspn")) {
-                                if(msgFromGroupChat != null) {
-                                    if(msgFromGroupChat.contains("hidsha256")) {
-                                        TextEncodeController.originCipherTextArea.setText(Arrays.toString(msgFromGroupChat.split("hidsha256")));
-                                    } else if(msgFromGroupChat.contains("hidspn")) {
-                                        String[] newMessage = msgFromGroupChat.split("hidspn");
-                                        String spnCipherText = newMessage[1];
-                                        TextEncodeController.originCipherTextArea.setText(spnCipherText);
-                                        TextEncodeController.originPlainTextArea.setText(SPN.decryptWithSpn(spnCipherText, TextEncodeController.key));
-                                    }
-                                }
-                            }
-                        } catch (Exception e) {
+
+                while(socket.isConnected()) {
+                    try {
+                        msgFromGroupChat = bufferedReader.readLine();
+                        if(msgFromGroupChat.contains("hidsha256")) {
+                            TextEncodeController.originCipherTextArea.setText(Arrays.toString(msgFromGroupChat.split("hidsha256")));
                             closeEverything(socket, bufferedReader, bufferedWriter);
+                            break;
+                        } else if(msgFromGroupChat.contains("hidspn")) {
+                            String[] newMessage = msgFromGroupChat.split("hidspn");
+                            String spnCipherText = newMessage[1];
+                            TextEncodeController.originCipherTextArea.setText(spnCipherText);
+                            TextEncodeController.originPlainTextArea.setText(SPN.decryptWithSpn(spnCipherText, TextEncodeController.key));
+                            closeEverything(socket, bufferedReader, bufferedWriter);
+                            break;
                         }
-                    //}
+                    } catch (IOException e) {
+                        closeEverything(socket, bufferedReader, bufferedWriter);
+                    }
                 }
-                return null;
             }
-        };
-        listenForMessageThread = new Thread(listenForMessageTask);
-        listenForMessageThread.start();
+        }).start();
     }
 
     public Socket getClientSocket() {
