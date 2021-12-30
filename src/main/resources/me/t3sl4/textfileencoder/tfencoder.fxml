@@ -16,7 +16,7 @@
     <children>
         <MenuBar>
             <menus>
-                <Menu mnemonicParsing="false" text="Developed by Halil İbrahim Direktör" />
+                <Menu mnemonicParsing="false" text="Developed by Ahmet Can ÖZTÜRKMEN &amp;&amp; Melih SADİ &amp;&amp; Ömer TANRİSEVEN &amp;&amp; Abdullah GEREKAN" />
             </menus>
         </MenuBar>
         <AnchorPane fx:id="textEncodePane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="640.0" prefWidth="640.0">

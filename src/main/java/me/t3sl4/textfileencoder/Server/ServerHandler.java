@@ -26,8 +26,8 @@ public class ServerHandler extends Thread{
     }
 
     public void sendToAllClient(String text){
-        for(int i = 0; i<Server2.connections.size(); i++){
-            ServerHandler sc = Server2.connections.get(i);
+        for(int i = 0; i< Server.connections.size(); i++){
+            ServerHandler sc = Server.connections.get(i);
             sc.sendToClient(text);
         }
     }

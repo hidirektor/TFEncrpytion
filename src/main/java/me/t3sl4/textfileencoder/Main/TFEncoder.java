@@ -1,17 +1,12 @@
 package me.t3sl4.textfileencoder.Main;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import me.t3sl4.textfileencoder.Runner;
 
-import java.io.File;
 import java.io.IOException;
 
 public class TFEncoder extends Application {

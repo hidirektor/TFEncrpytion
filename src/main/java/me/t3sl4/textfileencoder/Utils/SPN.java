@@ -121,10 +121,6 @@ public class SPN {
             char char_at_cipher = (char)ascii_at_cipher;
             plain += char_at_cipher;
         }
-
         return plain;
-
-
     }
-
 }

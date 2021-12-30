@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,8 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
-import me.t3sl4.textfileencoder.Client.Client;
-import me.t3sl4.textfileencoder.Server.Server2;
+import me.t3sl4.textfileencoder.Server.Server;
 import me.t3sl4.textfileencoder.Utils.FileEncryption;
 import me.t3sl4.textfileencoder.Utils.FileZIP;
 import me.t3sl4.textfileencoder.Utils.SHA256;
@@ -49,9 +47,6 @@ public class TextEncodeController implements Initializable {
 
     @FXML
     private TextField selectedFilePath;
-
-    @FXML
-    private TextField nicknameField;
 
     @FXML
     private CheckBox sha256CheckBox;
@@ -86,6 +81,7 @@ public class TextEncodeController implements Initializable {
     static Alert alert = new Alert(Alert.AlertType.ERROR);
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
+    public static int keyStat = 0;
     public static String key = null;
     public static String sha256CipherText = null;
     public static String sha256PlainText = null;
@@ -106,12 +102,10 @@ public class TextEncodeController implements Initializable {
     public static Socket socket;
     private static DataInputStream din;
     private static DataOutputStream dout;
-    private Server2 server;
+    private Server server;
 
     private Image FirstTick = new Image(getClass().getResourceAsStream("/images/FirstTick.png"));
     private Image SecTick = new Image(getClass().getResourceAsStream("/images/SecTick.png"));
-
-    public static int keyStat = 0;
 
     public void initialize(URL location, ResourceBundle resources) {
         this.originPlainTextArea = plainTextArea;
@@ -279,7 +273,7 @@ public class TextEncodeController implements Initializable {
     public void encodeSelectedFile() {
         if(selectedFile != null && key != null) {
             try {
-                //fileExtension.setText(findExtension(selectedFile.getAbsolutePath()));
+                fileExtension.setText(findExtension(selectedFile.getAbsolutePath()));
                 FileEncryption.encryptFile(selectedFile.getAbsolutePath(), key);
                 fileEncryptionImageView.setImage(FirstTick);
                 fileEncodeStat = true;
@@ -445,7 +439,7 @@ public class TextEncodeController implements Initializable {
                 @Override
                 protected Void call() throws Exception {
                     ServerSocket serverSocket = new ServerSocket(1334);
-                    server = new Server2(serverSocket);
+                    server = new Server(serverSocket);
                     Task<Void> startFunctionCallTask = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
