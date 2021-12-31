@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: me.t3sl4.textfileencoder.Main.TFEncoder
+Main-Class: me.ahmetmelihomerabdullah.textfileencoder.Main.TFEncoder
 

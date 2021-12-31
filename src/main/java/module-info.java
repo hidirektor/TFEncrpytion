@@ -13,12 +13,12 @@ module me.t3sl4.textfileencoder {
     requires org.apache.commons.codec;
     requires java.desktop;
 
-    opens me.t3sl4.textfileencoder to javafx.fxml;
-    exports me.t3sl4.textfileencoder;
-    exports me.t3sl4.textfileencoder.Utils;
-    opens me.t3sl4.textfileencoder.Utils to javafx.fxml;
-    exports me.t3sl4.textfileencoder.Controllers;
-    opens me.t3sl4.textfileencoder.Controllers to javafx.fxml;
-    exports me.t3sl4.textfileencoder.Main;
-    opens me.t3sl4.textfileencoder.Main to javafx.fxml;
+    opens me.ahmetmelihomerabdullah.textfileencoder to javafx.fxml;
+    exports me.ahmetmelihomerabdullah.textfileencoder;
+    exports me.ahmetmelihomerabdullah.textfileencoder.Utils;
+    opens me.ahmetmelihomerabdullah.textfileencoder.Utils to javafx.fxml;
+    exports me.ahmetmelihomerabdullah.textfileencoder.Controllers;
+    opens me.ahmetmelihomerabdullah.textfileencoder.Controllers to javafx.fxml;
+    exports me.ahmetmelihomerabdullah.textfileencoder.Main;
+    opens me.ahmetmelihomerabdullah.textfileencoder.Main to javafx.fxml;
 }
