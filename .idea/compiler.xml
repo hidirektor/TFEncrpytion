@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="TextFileEncoder" />
+        <module name="TFEncryption" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="TextFileEncoder" target="11" />
+      <module name="TFEncryption" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -3,22 +3,14 @@ module me.t3sl4.textfileencoder {
     requires javafx.fxml;
     requires javafx.web;
 
-    requires org.controlsfx.controls;
-    requires com.dlsc.formsfx;
-    requires validatorfx;
-    requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.bootstrapfx.core;
-    requires eu.hansolo.tilesfx;
-    requires commons.collections;
-    requires org.apache.commons.codec;
     requires java.desktop;
 
-    opens me.ahmetmelihomerabdullah.textfileencoder to javafx.fxml;
-    exports me.ahmetmelihomerabdullah.textfileencoder;
-    exports me.ahmetmelihomerabdullah.textfileencoder.Utils;
-    opens me.ahmetmelihomerabdullah.textfileencoder.Utils to javafx.fxml;
-    exports me.ahmetmelihomerabdullah.textfileencoder.Controllers;
-    opens me.ahmetmelihomerabdullah.textfileencoder.Controllers to javafx.fxml;
-    exports me.ahmetmelihomerabdullah.textfileencoder.Main;
-    opens me.ahmetmelihomerabdullah.textfileencoder.Main to javafx.fxml;
+    opens me.t3sl4.tfencryption to javafx.fxml;
+    exports me.t3sl4.tfencryption;
+    exports me.t3sl4.tfencryption.Utils;
+    opens me.t3sl4.tfencryption.Utils to javafx.fxml;
+    exports me.t3sl4.tfencryption.Controllers;
+    opens me.t3sl4.tfencryption.Controllers to javafx.fxml;
+    exports me.t3sl4.tfencryption.Main;
+    opens me.t3sl4.tfencryption.Main to javafx.fxml;
 }

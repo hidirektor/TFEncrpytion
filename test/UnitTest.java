@@ -1,7 +1,8 @@
-import me.ahmetmelihomerabdullah.textfileencoder.Utils.FileEncryption;
-import me.ahmetmelihomerabdullah.textfileencoder.Utils.FileZIP;
-import me.ahmetmelihomerabdullah.textfileencoder.Utils.SHA256;
-import me.ahmetmelihomerabdullah.textfileencoder.Utils.SPN;
+import me.t3sl4.tfencryption.Utils.FileEncryption;
+import me.t3sl4.tfencryption.Utils.FileZIP;
+import me.t3sl4.tfencryption.Utils.SHA256;
+import me.t3sl4.tfencryption.Utils.SPN;
+import me.t3sl4.tfencryption.Utils.SHA256;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
