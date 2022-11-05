@@ -50,11 +50,18 @@ public class Server {
 
     public void closeServerSocket() {
         try {
-            if(ss != null) {
+            if(!checkServerSocket(ss)) {
                 ss.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean checkServerSocket(ServerSocket ss) {
+        if(ss == null) {
+            return true;
+        }
+        return false;
     }
 }

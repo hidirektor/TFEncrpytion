@@ -123,4 +123,11 @@ public class SPN {
         }
         return plain;
     }
+
+    public static boolean checkBinary(String cipherText) {
+        if (cipherText.matches("[01]+")) {
+            return true;
+        }
+        return false;
+    }
 }

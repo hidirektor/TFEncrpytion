@@ -278,7 +278,7 @@ public class TextEncodeController implements Initializable {
     public void encodeSelectedFile() {
         if(selectedFile != null && key != null) {
             try {
-                originFileExtension.setText(findExtension(selectedFile.getAbsolutePath()));
+                //originFileExtension.setText(findExtension(selectedFile.getAbsolutePath()));
                 FileEncryption.encryptFile(selectedFile.getAbsolutePath(), key);
                 fileEncryptionImageView.setImage(FirstTick);
                 fileEncodeStat = true;
@@ -427,7 +427,7 @@ public class TextEncodeController implements Initializable {
         return "." + extension;
     }
 
-    private static boolean isPortAvailable(int port) {
+    public static boolean isPortAvailable(int port) {
         try {
             ServerSocket srv = new ServerSocket(port);
             srv.close();
@@ -557,13 +557,12 @@ public class TextEncodeController implements Initializable {
         }
     }
 
-    private boolean checkBinary(String cipherText) {
+    private static boolean checkBinary(String cipherText) {
         if (cipherText.matches("[01]+")) {
             return true;
         }
         return false;
     }
-
 
 
 

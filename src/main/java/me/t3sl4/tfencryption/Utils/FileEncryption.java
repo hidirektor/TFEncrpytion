@@ -15,7 +15,11 @@ public class FileEncryption {
             (byte) 0x5b, (byte) 0xd7, (byte) 0x45, (byte) 0x17
     };
 
-    private static Cipher makeCipher(String pass, Boolean decryptMode) throws GeneralSecurityException{
+    private static Cipher makeCipher(String pass, Boolean decryptMode) throws GeneralSecurityException {
+        if(isNull(pass)) {
+            //Default pass for null keys.
+            pass = "tfencoder";
+        }
         PBEKeySpec keySpec = new PBEKeySpec(pass.toCharArray());
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
         SecretKey key = keyFactory.generateSecret(keySpec);
@@ -31,6 +35,13 @@ public class FileEncryption {
         }
 
         return cipher;
+    }
+
+    public static boolean isNull(String pass) {
+        if(pass == null) {
+            return true;
+        }
+        return false;
     }
 
     public static void encryptFile(String fileName, String pass)
@@ -139,5 +150,13 @@ public class FileEncryption {
         inFile.delete();
         target.close();
         return new File(fileName);
+    }
+
+    public static int testFile(String path) {
+        File selectedFile = new File(path);
+        if(selectedFile.length() == 0) {
+            return 0;
+        }
+        return 1;
     }
 }
